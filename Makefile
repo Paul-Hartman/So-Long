@@ -19,7 +19,7 @@ NAME := program
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ -Llibft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
+	$(CC) $(CFLAGS) -g -o $@ $^ -Llibft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
 
 $(LIB_NAME): $(OBJS)
 	ar rcs $@ $^

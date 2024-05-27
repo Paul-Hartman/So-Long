@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/27 17:10:58 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:50:29 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define KEY_DOWN 65364
 #define KEY_LEFT 65361
 #define KEY_RIGHT 65363
+#define KEY_ESC 65307
 
 typedef struct	s_data {
 	void	*img;
@@ -37,6 +38,7 @@ typedef struct	s_vars {
 	void	*win;
 	int		x;
 	int		y;
+	int color;
 	t_data	img;
 }				t_vars;
 
