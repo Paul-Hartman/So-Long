@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/24 19:34:34 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:15:43 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@
 // 	return (map);
 // }
 
+
+
 char	*add_to_string(char *str, char *buf)
 {
 	char	*newstr;
@@ -69,70 +71,98 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 }
 
 
-void draw_next_frame(t_data *img)
-{
-	int color1 = 0x00FF0000; // Red
-	int color2 = 0x0000FF00; // Green
-	int square_size = 1000;
-	int square_x = 100;
-	int square_y = 100;
-	for (int i = square_x; i < square_x + square_size; i++) 
-	{
-		for (int j = square_y; j < square_y + square_size; j++) 
-		{
-			int color;
-			if ((i / 100) % 2 == (j / 1) % 2) 
-			{
-				color = color1;
-			}
-			else
-				color = color2;
+// void draw_next_frame(t_vars vars)
+// {
+// 	int color1 = 0x00FF0000; // Red
+// 	int color2 = 0x0000FF00; // Green
+// 	int square_size = 100;
+// 	int square_x = 100;
+// 	int square_y = 100;
+// 	printf("x = %d\n", vars.x);
+// 	printf("y = %d\n", vars.y);
+// 	for (int i = square_x; i < square_x + square_size; i++) 
+// 	{
+// 		for (int j = square_y; j < square_y + square_size; j++) 
+// 		{
+// 			int color;
+// 			if ((i / 100) % 2 == (j / 1) % 2) 
+// 			{
+// 				color = color1;
+// 			}
+// 			else
+// 				color = color2;
 		
-		my_mlx_pixel_put(img, i, j, color);
-		}
-	}
+// 		my_mlx_pixel_put(vars.img.img, i, j, color);
+// 		}
+// 	}
+// 	//mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
 
-}
+// }
 
-void double_buffering(t_data *img, void *mlx, void *win)
+// void double_buffering(t_vars *vars)
+// {
+//     t_data buffer;
+
+//     // Create a new image for the back buffer
+//     buffer.img = mlx_new_image(vars->mlx, 1920, 1080);
+//     buffer.addr = mlx_get_data_addr(buffer.img, &buffer.bits_per_pixel, &buffer.line_length,
+//                                     &buffer.endian);
+
+//     // Draw the next frame to the back buffer
+//     draw_next_frame(*vars);
+
+//     // Swap the buffers
+//     mlx_destroy_image(vars->mlx, vars->img.img);
+// 	vars->img.img = buffer.img;
+
+//     // Display the new front buffer
+// 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+    
+// }
+
+
+int	move_pixel(int keycode, t_vars *vars)
 {
-    t_data buffer;
+	if(keycode == 32)
+		mlx_destroy_window(vars->mlx, vars->win);;
+	if(keycode == KEY_UP)
+		vars->y +=1;
+	if(keycode == KEY_DOWN && vars->y > 0)
+		vars->y -=1;
+	if(keycode == KEY_RIGHT)
+		vars->x +=1;
+	if(keycode == KEY_LEFT && vars->x > 0)
+		vars->x -=1;
 
-    // Create a new image for the back buffer
-    buffer.img = mlx_new_image(mlx, 1920, 1080);
-    buffer.addr = mlx_get_data_addr(buffer.img, &buffer.bits_per_pixel, &buffer.line_length,
-                                    &buffer.endian);
-
-    // Draw the next frame to the back buffer
-    draw_next_frame(&buffer);
-
-    // Swap the buffers
-    mlx_destroy_image(mlx, img->img);
-    *img = buffer;
-
-    // Display the new front buffer
-    mlx_put_image_to_window(mlx, win, img->img, 0, 0);
+	printf("x = %d\n", vars->x);
+	printf("y = %d\n", vars->y);
+	my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	return (0);
 }
+
 
 
 int	main(void)
 {
-	void	*mlx;
-	void	*mlx_win;
-	
-	
-	t_data	img;
-	
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-	img.img = mlx_new_image(mlx, 1920, 1080);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-								&img.endian);
-	//my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
-	// Draw a square
-	
+	//void	*mlx;
+	//void	*mlx_win;
+	t_vars	vars;
+	//t_data	img;
+	vars.x = 0;
+	vars.y = 0;
 
-	
-	double_buffering(&img, mlx, mlx_win);
-	mlx_loop(mlx);
+	vars.mlx = mlx_init();
+	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
+	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
+	vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
+	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
+								&vars.img.endian);
+	my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
+	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
+	mlx_loop(vars.mlx);
 }
+
+
+
+
