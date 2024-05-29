@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/27 19:50:29 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:59:51 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 #define KEY_RIGHT 65363
 #define KEY_ESC 65307
 
+#define SCREENWIDTH 1920
+#define SCREENHEIGHT 1080
+
 typedef struct	s_data {
 	void	*img;
 	char	*addr;
@@ -39,6 +42,11 @@ typedef struct	s_vars {
 	int		x;
 	int		y;
 	int color;
-	t_data	img;
+	//t_data	img;
+	void *bg_img;
+	void	*char_img;
+	int		img_width;
+    int		img_height;
+	
 }				t_vars;
 

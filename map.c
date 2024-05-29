@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/27 19:54:40 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/29 18:10:32 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,22 +72,29 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 int draw_next_frame(t_vars *vars)
 {
-	vars->color += 1;
-	vars->x += 1;
-	vars->y += 1;
-	for (int i = vars->x; i < vars->x + 100; i++) 
-	{
-		for (int j = vars->y; j < vars->y + 100; j++) 
-		{
-			if(vars->y + 100 > 1080)
-				vars->y = 0;
-			if(vars->x + 100 > 1920)
-				vars->x = 0;
-			my_mlx_pixel_put(&vars->img, i, j, vars->color);
-		}
-	}
+	//vars->color += 1;
+	// vars->x += 1;
+	// vars->y += 1;
+	//int i = 0;
+	// while(i < SCREENWIDTH)
+	// {
+	// 	int j = 0;
+	// 	while(j < SCREENHEIGHT)
+	// 	{
+	// 		my_mlx_pixel_put(&vars->img, i, j, 0x00000000);
+	// 		j++;
+	// 	}
+	// 	i++;
+	// }	
 	
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	if(vars->y + 100 > SCREENHEIGHT)
+		vars->y = 0;
+	if(vars->x + 100 > SCREENWIDTH)
+		vars->x = 0;
+	
+	
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->bg_img, 0, 0);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->char_img, vars->x, vars->y);
 	return (0);
 }
 // int draw_next_frame(t_vars *vars)
@@ -153,21 +160,19 @@ int	move_pixel(int keycode, t_vars *vars)
 	if(keycode == KEY_ESC)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
-		return(0);
+		exit(0);
 	}
 	if(keycode == KEY_UP  && vars->y > 0)
-		vars->y -=1;
+		vars->y -=10;
 	if(keycode == KEY_DOWN && vars->y < 1080)
-		vars->y +=1;
+		vars->y +=10;
 	if(keycode == KEY_RIGHT && vars->x < 1920)
-		vars->x +=1;
+		vars->x +=10;
 	if(keycode == KEY_LEFT && vars->x > 0)
-		vars->x -=1;
+		vars->x -=10;
 
-	printf("x = %d\n", vars->x);
-	printf("y = %d\n", vars->y);
-	my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	//my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
+	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 	return (0);
 }
 
@@ -184,17 +189,20 @@ int	main(void)
 	//void	*mlx_win;
 	t_vars	vars;
 	//t_data	img;
+	
 	vars.x = 0;
 	vars.y = 0;
 	vars.color = 0x00000000;
-
+	
 	vars.mlx = mlx_init();
 	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
+	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "Vampire.xpm", &vars.img_width, &vars.img_height);
+	vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
 	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
 	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
-	vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
-								&vars.img.endian);
+	//  vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
+	//  vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
+	//  							&vars.img.endian);
 	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
 	//mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
 	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
@@ -203,4 +211,21 @@ int	main(void)
 
 
 
+// int	main(void)
+// {
 
+//     void	*mlx;
+//     void	*win;
+//     void	*img;
+//     char	*relative_path = "Vampire.xpm";
+//     int		img_width;
+//     int		img_height;
+	
+
+//     mlx = mlx_init();
+//     win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
+//     img = mlx_xpm_file_to_image(mlx, relative_path, &img_width, &img_height);
+// 	printf("img: %p\n", img);
+//     mlx_put_image_to_window(mlx, win, img, 0, 0);
+//     mlx_loop(mlx);
+// }
