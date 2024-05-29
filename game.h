@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/29 17:59:51 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/29 19:11:56 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,20 @@
 #define KEY_RIGHT 65363
 #define KEY_ESC 65307
 
+#define KEY_W 119
+#define KEY_A 97
+#define KEY_S 115
+#define KEY_D 100
+
+#define CHAR_WIDTH 88
+#define CHAR_HEIGHT 97
+
 #define SCREENWIDTH 1920
 #define SCREENHEIGHT 1080
+
+#define MLX_SYNC_IMAGE_WRITABLE		1
+#define MLX_SYNC_WIN_FLUSH_CMD		2
+#define MLX_SYNC_WIN_CMD_COMPLETED	3
 
 typedef struct	s_data {
 	void	*img;
@@ -42,7 +54,7 @@ typedef struct	s_vars {
 	int		x;
 	int		y;
 	int color;
-	//t_data	img;
+	t_data	img;
 	void *bg_img;
 	void	*char_img;
 	int		img_width;
@@ -50,3 +62,4 @@ typedef struct	s_vars {
 	
 }				t_vars;
 
+int	mlx_sync(int cmd, void *ptr);
