@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/30 14:08:23 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:47:08 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,24 @@ typedef struct	s_data {
 	int		endian;
 }				t_data;
 
+typedef struct	s_coord {
+	int x;
+	int y;
+}				t_coord;
+
 
 typedef struct	s_legend {
 	int col;
 	int row;
+	int c_count;
+	t_coord p;
+	t_coord e;
 }				t_legend;
 
+typedef struct s_list {
+	t_coord data;
+	struct s_list *next;
+} t_list;
 
 typedef struct	s_vars {
 	void	*mlx;

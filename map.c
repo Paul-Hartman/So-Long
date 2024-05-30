@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/30 15:14:53 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:54:42 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,31 @@ t_legend check_map(char *filename)
 	char buf;
 	int p_count;
 	int e_count;
-	int c_count;
 	int obst_count;
 	p_count = 0;
-	c_count = 0;
+	leg.c_count = 0;
 	e_count = 0;
 	obst_count = 0;
 	if (!filename || !ft_strnstr(filename, ".ber", ft_strlen(filename)))
+	{
+		printf("wrong file Error\n");
 		exit (0);
+	}
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
+	{
+		printf("read Error\n");
 		exit (0);
+	}
 	leg.col = 0;
-	leg.row = 0;
+	leg.row = 1;
 	while (read(fd, &buf, 1) > 0)
 	{
 		if (buf == '\n')
+		{
+			leg.col = 0;
 			leg.row++;
+		}
 		if (buf == '0' || buf == '1' || buf == 'C' || buf == 'E' || buf == 'P')
 		{
 			leg.col++;
@@ -46,13 +54,29 @@ t_legend check_map(char *filename)
 			if (buf == 'E')
 				e_count++;
 			if (buf == 'C')
-				c_count++;
+				leg.c_count++;
 			if(buf == '1')
 				obst_count++;
 		}
+		else
+		{
+			printf("map error Error\n");
+			exit (0);
+		}
 	}
-	if(p_count != 1 || e_count != 1 || c_count < 1 || obst_count < 2*(leg.col -1) + (leg.row -1))
-		exit(0);
+	if(p_count != 1 || e_count != 1 || leg.c_count < 1 || obst_count < 2*((leg.col -1) + (leg.row -1)))
+	{
+		
+		printf("map error Error\n");
+		exit (0);
+	}
+	printf("leg.col: %d\n", leg.col);
+		printf("leg.row: %d\n", leg.row);
+		printf("p_count: %d\n", p_count);
+		printf("e_count: %d\n", e_count);
+		printf("c_count: %d\n", leg.c_count);
+		printf("expeced obst_count: %d\n", 2*((leg.col -1) + (leg.row -1)));	
+		printf("obst_count: %d\n", obst_count);
 	close(fd);
 	return (leg);
 }
@@ -88,6 +112,16 @@ char **read_map(char *filename, t_legend leg)
 		}
 		else
 		{
+			if(buf == 'P')
+			{
+				leg.p.x = col;
+				leg.p.y = row;
+			}
+			if(buf == 'E')
+			{
+				leg.e.x = col;
+				leg.e.y = row;
+			}
 			map[row][col] = buf;
 			col++;
 		}
@@ -95,6 +129,54 @@ char **read_map(char *filename, t_legend leg)
 	close(fd);
 	return (map);
 }
+
+// int map_isvalidpath(char **map, t_legend leg)
+// {
+// 	int i;
+// 	i = 0;
+// 	t_coord diff;
+// 	t_coord current_pos;
+// 	diff.x = leg.p.x - leg.e.x;
+// 	diff.y = leg.p.y - leg.e.y;
+// 	char **path_map;
+// 	path_map = malloc(sizeof(char *) * leg.row);
+// 	while(i < leg.row)
+// 	{
+// 		map[i] = malloc(sizeof(char) * leg.col);
+// 		i++;
+// 	}
+// 	while(i < leg.row)
+// 	{
+// 		int j = 0;
+// 		while(j < leg.col)
+// 		{
+// 			if(map[i][j] == '1')
+// 				path_map[i][j] = 'N';
+// 			else
+// 				path_map[i][j] = 'F';
+// 			j++;
+// 		}
+// 		i++;
+// 	}
+	
+// 	t_list *queue = ft_lstnew(&leg.p);
+// 	current_pos = leg.p;
+// 	while(ft_lstsize(queue) > 0)
+// 	{
+		
+// 	}
+	
+// 	i=0;
+// 	while(i < leg.col)
+// 	{
+// 		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
+// 			return (0);
+// 		if(i < leg.row && map[i][0] != '1' || map[i][leg.col - 1] != '1')
+// 			return (0);
+// 		i++;
+// 	}
+// 	return (1);
+// }
 
 
 
@@ -213,21 +295,31 @@ int	close_window(t_vars *vars)
 // 	mlx_loop(vars.mlx);
 // }
 
-int main()
-{
-	char **map;
-	t_legend leg;
-	leg = check_map("map.ber");
-	
-	map = read_map("map.ber", leg);
-	int i = 0;
-	while (map[i] != NULL)
+
+	int main()
 	{
-		printf("%s\n", map[i]);
-		i++;
+		char **map;
+		t_legend leg;
+		leg = check_map("map.ber");
+
+		map = read_map("map.ber", leg);
+		int i = 0;
+		int j = 0;
+		if (map == NULL)
+			printf("map is null\n");
+		while (map[i] != NULL)
+		{
+			j = 0;
+			while (map[i][j] != '\0')
+			{
+				printf("%c", map[i][j]);
+				j++;
+			}
+			printf("\n");
+			i++;
+		}
+		return 0;
 	}
-	return 0;
-}
 
 
 // int	main(void)
