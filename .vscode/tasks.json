@@ -4,10 +4,30 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make re",
+            "command": "cc",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-g",
+                "map.c",
+                "game.h",
+                "-Llibft",
+                "-lft",
+                "-Lmlx_linux",
+                "-lmlx_Linux",
+                "-L/usr/lib",
+                "-lXext",
+                "-lX11",
+                "-lm",
+                "-lz"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
             },
             "problemMatcher": []
         }

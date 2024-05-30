@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/29 19:20:14 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:14:53 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,87 @@
 
 
 
+t_legend check_map(char *filename)
+{
+	int fd;
+	t_legend leg;
+	char buf;
+	int p_count;
+	int e_count;
+	int c_count;
+	int obst_count;
+	p_count = 0;
+	c_count = 0;
+	e_count = 0;
+	obst_count = 0;
+	if (!filename || !ft_strnstr(filename, ".ber", ft_strlen(filename)))
+		exit (0);
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		exit (0);
+	leg.col = 0;
+	leg.row = 0;
+	while (read(fd, &buf, 1) > 0)
+	{
+		if (buf == '\n')
+			leg.row++;
+		if (buf == '0' || buf == '1' || buf == 'C' || buf == 'E' || buf == 'P')
+		{
+			leg.col++;
+			if (buf == 'P')
+				p_count++;
+			if (buf == 'E')
+				e_count++;
+			if (buf == 'C')
+				c_count++;
+			if(buf == '1')
+				obst_count++;
+		}
+	}
+	if(p_count != 1 || e_count != 1 || c_count < 1 || obst_count < 2*(leg.col -1) + (leg.row -1))
+		exit(0);
+	close(fd);
+	return (leg);
+}
 
-// char *read_map(char *filename)
-// {
-// 	int fd;
-// 	char *map;
-// 	char *buf;
-// 	int i;
-// 	char *line ;
-// 	line = "";
+
+char **read_map(char *filename, t_legend leg)
+{
+	int fd;
+	char **map;
+	char buf;
+	int row;
+	int col;
 	
-// 	if (!filename || !ft_strnstr(filename, ".ber"))
-// 		return (NULL);
-// 	fd = open(filename, O_RDONLY);
-// 	if (fd == -1)
-// 		return (NULL);
-// 	i = 0;
-// 	while (read(fd, buf, 1) > 0)
-// 	{
-// 		ft_strlcat(map + i, line);
-// 		i += ft_strlen(line);
-// 		map[i] = '\n';
-// 		i++;
-// 		free(line);
-// 	}
-// 	map[i] = '\0';
-// 	close(fd);
-// 	return (map);
-// }
+	row = 0;
+	col = 0;
+	map = malloc(sizeof(char *) * leg.row);
+	while(row < leg.row)
+	{
+		map[row] = malloc(sizeof(char) * leg.col);
+		row++;
+	}
+	row = 0;
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return (NULL);
+	
+	while (read(fd, &buf, 1) > 0)
+	{
+		if(buf == '\n')
+		{
+			row++;
+			col = 0;
+		}
+		else
+		{
+			map[row][col] = buf;
+			col++;
+		}
+	}
+	close(fd);
+	return (map);
+}
 
 
 
@@ -84,8 +137,6 @@ int draw_next_frame(t_vars *vars)
 	// 	}
 	// 	i++;
 	// }	
-	printf("var->x: %d\n", vars->x);
-	printf("var->y: %d\n", vars->y);
 	if(vars->y + CHAR_HEIGHT > SCREENHEIGHT)
 		vars->y = 1;
 	if(vars->x + CHAR_WIDTH > SCREENWIDTH)
@@ -132,36 +183,51 @@ int	close_window(t_vars *vars)
 }
 
 
-int	main(void)
-{
-	//void	*mlx;
-	//void	*mlx_win;
-	t_vars	vars;
-	//t_data	img;
+// int	main(void)
+// {
+// 	//void	*mlx;
+// 	//void	*mlx_win;
+// 	t_vars	vars;
+// 	//t_data	img;
 	
-	vars.x = 10;
-	vars.y = 10;
-	vars.color = 0x00000000;
+// 	vars.x = 10;
+// 	vars.y = 10;
+// 	vars.color = 0x00000000;
 	
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
-	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "Vampire.xpm", &vars.img_width, &vars.img_height);
-	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
-	vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
-	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
+// 	vars.mlx = mlx_init();
+// 	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
+// 	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "Vampire.xpm", &vars.img_width, &vars.img_height);
+// 	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
+// 	vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
+// 	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
 	
-	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
-	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
-	vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
-	  							&vars.img.endian);
-	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
+// 	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
+// 	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
+// 	vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
+// 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
+// 	  							&vars.img.endian);
+// 	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
+// 	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
 	
-	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
-	mlx_loop(vars.mlx);
-}
+// 	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
+// 	mlx_loop(vars.mlx);
+// }
 
+int main()
+{
+	char **map;
+	t_legend leg;
+	leg = check_map("map.ber");
+	
+	map = read_map("map.ber", leg);
+	int i = 0;
+	while (map[i] != NULL)
+	{
+		printf("%s\n", map[i]);
+		i++;
+	}
+	return 0;
+}
 
 
 // int	main(void)

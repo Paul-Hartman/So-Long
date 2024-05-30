@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/29 19:11:56 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/30 14:08:23 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,12 @@ typedef struct	s_data {
 	int		line_length;
 	int		endian;
 }				t_data;
+
+
+typedef struct	s_legend {
+	int col;
+	int row;
+}				t_legend;
 
 
 typedef struct	s_vars {
