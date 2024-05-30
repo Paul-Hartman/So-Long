@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/30 17:47:08 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:12:58 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,9 @@ typedef struct	s_legend {
 	t_coord e;
 }				t_legend;
 
-typedef struct s_list {
-	t_coord data;
-	struct s_list *next;
-} t_list;
 
-typedef struct	s_vars {
+
+ typedef struct	s_vars {
 	void	*mlx;
 	void	*win;
 	int		x;
@@ -75,8 +72,12 @@ typedef struct	s_vars {
 	t_data	img;
 	void *bg_img;
 	void	*char_img;
+	void *wall_img;
+	void *coll_img;
 	int		img_width;
     int		img_height;
+	t_legend leg;
+	char **map;
 	
 }				t_vars;
 
