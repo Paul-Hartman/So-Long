@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/31 15:57:56 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/31 17:58:12 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	t_coord directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 	t_coord next_pos;
 	t_coord chosen_pos;
+	next_pos.x = 0;
+	next_pos.y = 0;
 	chosen_pos.x = -1;
 	chosen_pos.y = -1;
 	int shortest_dist;
@@ -116,9 +118,15 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	while(i < 4)
 	{
 		
+
 		next_pos.x = current_pos.x + directions[i].x;
 		next_pos.y = current_pos.y + directions[i].y;
-		if(map[next_pos.x][next_pos.y] == 'F' || map[next_pos.x][next_pos.y] == 'E')
+		if(next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
+		{
+			i++;
+			continue;
+		}
+		if(map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E')
 		{
 			neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
 			if(neighbor_dist < shortest_dist)
@@ -137,28 +145,27 @@ int greedy_best_search(char **map, t_legend leg)
 {
 	//unsigned int dist = abs(leg.p.x - leg.e.x) + abs(leg.p.y - leg.e.y);
 	t_coord current_pos;
-	t_coord *next_pos;
 	int steps;
 	steps=0;
-	next_pos = NULL;
 	current_pos = leg.p;
 	map[current_pos.y][current_pos.x] = 'T';
 	t_list *queue = ft_lstnew(&leg.p);
 	while(queue)
 	{
 		current_pos = get_neighbors(map, current_pos, leg);
-		if(map[current_pos.y][current_pos.x] == 'E')
+		if(current_pos.x == -1 && current_pos.y == -1 && queue)
+		{
+			current_pos = *(t_coord *)ft_lstlast(queue)->content;
+			lstremove_back(&queue);
+			
+			steps--;
+		}
+		else if(map[current_pos.y][current_pos.x] == 'E')
 			return (steps);
-		else if(current_pos.x != -1 && current_pos.y != -1)
+		else
 		{
 			map[current_pos.y][current_pos.x] = 'T';
 			ft_lstadd_back(&queue, ft_lstnew(&current_pos));
-		}
-		else
-		{
-			lstremove_back(&queue);
-			current_pos = *(t_coord *)ft_lstlast(queue)->content;
-			steps--;
 		}
 		steps++;
 	}
@@ -173,9 +180,10 @@ int map_isvalidpath(char **map, t_legend leg)
 	path_map = malloc(sizeof(char *) * leg.row);
 	while(i < leg.row)
 	{
-		map[i] = malloc(sizeof(char) * leg.col);
+		path_map[i] = malloc(sizeof(char) * leg.col);
 		i++;
 	}
+	i = 0;
 	while(i < leg.row)
 	{
 		int j = 0;
@@ -192,6 +200,10 @@ int map_isvalidpath(char **map, t_legend leg)
 		i++;
 	}
 	
+	// if (leg.rows < 1 || !map || !map[0]) {
+    //     return 0; // Invalid input
+    // }
+	
 	while(i < leg.col)
 	{
 		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
@@ -203,6 +215,8 @@ int map_isvalidpath(char **map, t_legend leg)
 		}
 		i++;
 	}
+
+	
 	return (greedy_best_search(path_map, leg));
 		
 	
@@ -261,7 +275,7 @@ char **read_map(char *filename, t_legend leg)
 		exit (0);
 	}
 	printf("map is valid\n");
-	printf("number of steps %i", map_isvalidpath(map, leg));
+	printf("number of steps %i\n", map_isvalidpath(map, leg));
 	return (map);
 }
 
@@ -449,11 +463,23 @@ char **read_map(char *filename, t_legend leg)
 //     mlx_put_image_to_window(mlx, win, img, 0, 0);
 //     mlx_loop(mlx);
 // }
-
+void print_map(char **map, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+}
 int	main(void)
 {
+	int i = 0;
+	int j = 0;
 	t_vars vars;
 	vars.leg = check_map("map.ber");
 	vars.map = read_map("map.ber", vars.leg);
 	
+	print_map(vars.map, vars.leg.row, vars.leg.col);
 }
+	
+
