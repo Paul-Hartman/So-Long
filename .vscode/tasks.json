@@ -1,35 +1,27 @@
+// .vscode/tasks.json
 {
     "version": "2.0.0",
     "tasks": [
         {
             "label": "build",
             "type": "shell",
-            "command": "cc",
+            "command": "gcc", // Replace with your compiler
             "args": [
-                "-Wall",
-                "-Wextra",
-                "-Werror",
                 "-g",
-                "map.c",
-                "game.h",
-                "-Llibft",
-                "-lft",
-                "-Lmlx_linux",
-                "-lmlx_Linux",
-                "-L/usr/lib",
-                "-lXext",
-                "-lX11",
-                "-lm",
-                "-lz"
+				
+                "${workspaceFolder}/map.c", // Replace with the path to your source file
+				"${workspaceFolder}/game.h", // Replace with the path to your source file
+				"${workspaceFolder}/libft/libft.a",
+                "-o",
+                "${workspaceFolder}/program" // Replace with the path to your executable
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "presentation": {
-                "reveal": "always"
-            },
-            "problemMatcher": []
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }

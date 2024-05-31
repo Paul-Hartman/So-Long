@@ -1,25 +1,26 @@
+// .vscode/launch.json
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Launch Program",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/program",
-            "args": [],
+            "program": "${workspaceFolder}/program", // Replace with the path to your executable
+            "args": [], // Add any command-line arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "preLaunchTask": "build", // Add this line
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "preLaunchTask": "build"
+            ]
         }
     ]
 }
