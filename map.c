@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/30 19:13:26 by phartman         ###   ########.fr       */
+/*   Updated: 2024/05/31 14:30:29 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,53 +130,110 @@ char **read_map(char *filename, t_legend leg)
 	return (map);
 }
 
-// int map_isvalidpath(char **map, t_legend leg)
-// {
-// 	int i;
-// 	i = 0;
-// 	t_coord diff;
-// 	t_coord current_pos;
-// 	diff.x = leg.p.x - leg.e.x;
-// 	diff.y = leg.p.y - leg.e.y;
-// 	char **path_map;
-// 	path_map = malloc(sizeof(char *) * leg.row);
-// 	while(i < leg.row)
-// 	{
-// 		map[i] = malloc(sizeof(char) * leg.col);
-// 		i++;
-// 	}
-// 	while(i < leg.row)
-// 	{
-// 		int j = 0;
-// 		while(j < leg.col)
-// 		{
-// 			if(map[i][j] == '1')
-// 				path_map[i][j] = 'N';
-// 			else
-// 				path_map[i][j] = 'F';
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-	
-// 	t_list *queue = ft_lstnew(&leg.p);
-// 	current_pos = leg.p;
-// 	while(ft_lstsize(queue) > 0)
-// 	{
+t_list get_neighbors(char **map, t_coord current_pos, t_legend leg)
+{
+	int i;
+	i=0;
+	t_coord directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+	t_coord next_pos;
+	t_list neighbors;
+	int shortest_dist;
+	int neighbor_dist;
+	shortest_dist = INT_MAX;
+	while(i < 4)
+	{
 		
-// 	}
+		next_pos.x = current_pos.x + directions[i].x;
+		next_pos.y = current_pos.y + directions[i].y;
+		if(map[next_pos.x][next_pos.y] == '0' || map[next_pos.x][next_pos.y] == 'E')
+		{
+			ft_lstadd_back(&neighbors, ft_lstnew(&next_pos));
+		}
+		
+		i++;
+	}
+	while(neighbors.content != NULL)
+	{
+		neighbor_dist = abs(neighbors.content.x - leg.e.x) + abs(neighbors.content.y - leg.e.y);
+		if(neighbor_dist < shortest_dist)
+		{
+			shortest_dist = neighbor_dist;
+			next_pos = neighbors.content;
+		}
+		dist = 
+		neighbors = neighbors->next;
+	}
+	return (neighbors);
+}
+
+int greedy_best_search(char **map, t_legend leg)
+{
+	//unsigned int dist = abs(leg.p.x - leg.e.x) + abs(leg.p.y - leg.e.y);
+	t_coord current_pos;
+	t_coord *next_pos;
+	next_pos = NULL;
+	current_pos = leg.p;
+	map[current_pos.y][current_pos.x] = 'T';
+	t_list *queue = ft_lstnew(&leg.p);
+	t_list neighbors;
+	while(queue)
+	{
+		neighbors = get_neighbors(map, current_pos);
+		while(neighbors.content != NULL)
+		{
+			abs(neighbors.content.x - leg.e.x) + abs(neighbors.content.y - leg.e.y)
+			neighbors = neighbors->next;
+		}
+	}
+}
+
+int map_isvalidpath(char **map, t_legend leg)
+{
+	int i;
+	i = 0;
+	t_coord diff;
+	t_coord current_pos;
+	diff.x = leg.p.x - leg.e.x;
+	diff.y = leg.p.y - leg.e.y;
+	char **path_map;
+	path_map = malloc(sizeof(char *) * leg.row);
+	while(i < leg.row)
+	{
+		map[i] = malloc(sizeof(char) * leg.col);
+		i++;
+	}
+	while(i < leg.row)
+	{
+		int j = 0;
+		while(j < leg.col)
+		{
+			if(map[i][j] == '1')
+				path_map[i][j] = 'N';
+			else
+				path_map[i][j] = 'F';
+			j++;
+		}
+		i++;
+	}
 	
-// 	i=0;
-// 	while(i < leg.col)
-// 	{
-// 		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
-// 			return (0);
-// 		if(i < leg.row && map[i][0] != '1' || map[i][leg.col - 1] != '1')
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
+	t_list *queue = ft_lstnew(&leg.p);
+	current_pos = leg.p;
+	while(ft_lstsize(queue) > 0)
+	{
+		
+	}
+	
+	i=0;
+	while(i < leg.col)
+	{
+		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
+			return (0);
+		if(i < leg.row && map[i][0] != '1' || map[i][leg.col - 1] != '1')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 
 
