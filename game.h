@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/30 19:12:58 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/05 14:12:23 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct	s_legend {
 	int c_count;
 	t_coord p;
 	t_coord e;
+	t_coord *c;
 }				t_legend;
 
 

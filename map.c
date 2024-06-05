@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/05/31 17:58:12 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/05 16:13:25 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,34 @@ void lstremove_back(t_list **lst)
 	free(current);
 }
 
+int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected)
+{
+	int i;
+	int shortest_dist;
+	int dist;
+	int closest_collectable;
+	shortest_dist = INT_MAX;
+	i = 0;
+	while(i < leg.c_count)
+	{
+		if(current_pos.x == leg.c[i].x && current_pos.y == leg.c[i].y)
+			(*collected)++;
+		if (map[leg.c[i].y][leg.c[i].x] != 'T')
+		{
+			dist = abs(current_pos.x - leg.c[i].x) + abs(current_pos.y - leg.c[i].y);
+			if(dist < shortest_dist)
+			{
+				shortest_dist = dist;
+				closest_collectable = i;
+			}
+		}
+		i++;
+	}
+	
+	return (closest_collectable);
+
+}
+
 
 t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 {
@@ -107,6 +135,8 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	t_coord directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 	t_coord next_pos;
 	t_coord chosen_pos;
+	static int collected;
+	
 	next_pos.x = 0;
 	next_pos.y = 0;
 	chosen_pos.x = -1;
@@ -114,11 +144,12 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	int shortest_dist;
 	int neighbor_dist;
 	shortest_dist = INT_MAX;
+	int j;
 	i=0;
+	if(collected < leg.c_count)
+		j = find_closest_collectable(map, current_pos, leg, &collected);
 	while(i < 4)
 	{
-		
-
 		next_pos.x = current_pos.x + directions[i].x;
 		next_pos.y = current_pos.y + directions[i].y;
 		if(next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
@@ -128,7 +159,15 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 		}
 		if(map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E')
 		{
-			neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
+			if(collected == leg.c_count)
+			{
+				neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
+			}
+			else
+			{
+				neighbor_dist = abs(next_pos.x - leg.c[j].x) + abs(next_pos.y - leg.c[j].y);
+			}
+			
 			if(neighbor_dist < shortest_dist)
 			{
 				shortest_dist = neighbor_dist;
@@ -157,11 +196,13 @@ int greedy_best_search(char **map, t_legend leg)
 		{
 			current_pos = *(t_coord *)ft_lstlast(queue)->content;
 			lstremove_back(&queue);
-			
 			steps--;
 		}
 		else if(map[current_pos.y][current_pos.x] == 'E')
+		{
+			printf("number of steps %i\n", steps);
 			return (steps);
+		}
 		else
 		{
 			map[current_pos.y][current_pos.x] = 'T';
@@ -231,6 +272,8 @@ char **read_map(char *filename, t_legend leg)
 	char buf;
 	int row;
 	int col;
+	int i;
+	i=0;
 	
 	row = 0;
 	col = 0;
@@ -240,6 +283,7 @@ char **read_map(char *filename, t_legend leg)
 		map[row] = malloc(sizeof(char) * leg.col);
 		row++;
 	}
+	leg.c = malloc(sizeof(t_coord) * leg.c_count);
 	row = 0;
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
@@ -264,6 +308,12 @@ char **read_map(char *filename, t_legend leg)
 				leg.e.x = col;
 				leg.e.y = row;
 			}
+			if(buf == 'C')
+			{
+				leg.c[i].x = col;
+				leg.c[i].y = row;
+				i++;
+			}
 			map[row][col] = buf;
 			col++;
 		}
@@ -275,7 +325,7 @@ char **read_map(char *filename, t_legend leg)
 		exit (0);
 	}
 	printf("map is valid\n");
-	printf("number of steps %i\n", map_isvalidpath(map, leg));
+	
 	return (map);
 }
 
@@ -473,8 +523,7 @@ void print_map(char **map, int rows, int cols) {
 }
 int	main(void)
 {
-	int i = 0;
-	int j = 0;
+	
 	t_vars vars;
 	vars.leg = check_map("map.ber");
 	vars.map = read_map("map.ber", vars.leg);
