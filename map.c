@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/05 17:16:09 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/05 20:06:08 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,7 +282,7 @@ int has_walls(char **map, t_legend leg)
 
 int is_rectangle(char **map, t_legend leg) 
 {
-    int length;
+    size_t length;
 	int i;
 	i = 0;
 	length = leg.col;
@@ -376,144 +376,186 @@ char **read_map(char *filename, t_legend leg)
 
 
 
-// void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
-// {
-// 	char	*dst;
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+{
+	char	*dst;
 
-// 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-// 	*(unsigned int*)dst = color;
-// }
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int*)dst = color;
+}
 
-// int draw_map(t_vars vars)
-// {
-// 	int i = 0;
-// 	int j = 0;
-// 	int x = 0;
-// 	int y = 0;
-// 	int distX = SCREENWIDTH / vars.leg.col;
-//     int distY = SCREENHEIGHT / vars.leg.row;
-// 	while(i < vars.leg.row)
-// 	{
-// 		j = 0;
-// 		x = 0;
-// 		while(j < vars.leg.col)
-// 		{
-// 			if(vars.map[i][j] == '1')
-// 				mlx_put_image_to_window(vars.mlx, vars.win, vars.wall_img, x, y);
-// 			else if(vars.map[i][j] == 'P')
-// 				mlx_put_image_to_window(vars.mlx, vars.win, vars.wall_img, x, y);
-// 			else if(vars.map[i][j] == 'E')
-// 				mlx_put_image_to_window(vars.mlx, vars.win, vars.wall_img, x, y);
-// 			else if(vars.map[i][j] == 'C')
-// 				mlx_put_image_to_window(vars.mlx, vars.win, vars.coll_img, x, y);
-// 			x+=distX;
-// 			j++;
-// 		}
+int draw_map(t_vars vars)
+{
+	int i = 0;
+	int j = 0;
+	int x = 0;
+	int y = 0;
+	int distX = vars.screenwidth / vars.leg.col;
+    int distY = vars.screenheight / vars.leg.row;
+	while(i < vars.leg.row)
+	{
+		j = 0;
+		x = 0;
+		while(j < vars.leg.col)
+		{
+			if(vars.map[i][j] == '1')
+				mlx_put_image_to_window(vars.mlx, vars.win, vars.wall_img, x, y);
+			else if(vars.map[i][j] == '0')
+				mlx_put_image_to_window(vars.mlx, vars.win, vars.floor_img, x, y);
+			else if(vars.map[i][j] == 'P')
+				mlx_put_image_to_window(vars.mlx, vars.win, vars.start_img, x, y);
+			else if(vars.map[i][j] == 'E')
+				mlx_put_image_to_window(vars.mlx, vars.win, vars.exit_img, x, y);
+			else if(vars.map[i][j] == 'C')
+				mlx_put_image_to_window(vars.mlx, vars.win, vars.coll_img, x, y);
+			x+=distX;
+			j++;
+		}
 		
-// 		y+=distY;
-// 		i++;
-// 	}
+		y+=distY;
+		i++;
+	}
 
-// 	return (0);
+	return (0);
 
-// }
-
-// int draw_next_frame(t_vars *vars)
-// {
-// 	// vars->color += 1;
-// 	// int i = 0;
-// 	// while(i < SCREENWIDTH)
-// 	// {
-// 	// 	int j = 0;
-// 	// 	while(j < SCREENHEIGHT)
-// 	// 	{
-// 	// 		my_mlx_pixel_put(&vars->img, i, j, 0x00000000);
-// 	// 		j++;
-// 	// 	}
-// 	// 	i++;
-// 	// }	
-// 	if(vars->y + CHAR_HEIGHT > SCREENHEIGHT)
-// 		vars->y = 1;
-// 	if(vars->x + CHAR_WIDTH > SCREENWIDTH)
-// 		vars->x = 1;
-// 	if(vars->y < 1)
-// 		vars->y = SCREENHEIGHT - CHAR_HEIGHT;
-// 	if(vars->x < 1)
-// 		vars->x = SCREENWIDTH - CHAR_WIDTH;
+}
+void collision(t_vars vars)
+{
+	int player_grid_x = vars.x / 16;
+	int player_grid_y = vars.y / 16;
+	static int points;
 	
-// 	//mlx_put_image_to_window(vars->mlx, vars->win, vars->bg_img, 0, 0);
-// 	mlx_put_image_to_window(vars->mlx, vars->win, vars->char_img, vars->x, vars->y);
-// 	mlx_string_put(vars->mlx, vars->win, 20,20, 0x00FF0000, "char *string");
-// 	draw_map(*vars);
-// 	//mlx_sync(MLX_SYNC_WIN_FLUSH_CMD, vars->win);
-// 	return (0);
-// }
-
-
-
-// int	move_pixel(int keycode, t_vars *vars)
-// {
-// 	if(keycode == KEY_ESC)
-// 	{
-// 		mlx_destroy_window(vars->mlx, vars->win);
-// 		exit(0);
-// 	}
-// 	if((keycode == KEY_UP || keycode == KEY_W)  && vars->y > 0)
-// 		vars->y -=10;
-// 	if((keycode == KEY_DOWN  || keycode == KEY_S) && vars->y < 1080)
-// 		vars->y +=10;
-// 	if((keycode == KEY_RIGHT || keycode == KEY_D) && vars->x < 1920)
-// 		vars->x +=10;
-// 	if((keycode == KEY_LEFT  || keycode == KEY_A) && vars->x > 0)
-// 		vars->x -=10;
-
-// 	//my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
-// 	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-// 	return (0);
-// }
-
-// int	close_window(t_vars *vars)
-// {
-// 	mlx_destroy_window(vars->mlx, vars->win);
-// 	exit(0);
-// }
-
-
-// int	main(void)
-// {
-// 	//void	*mlx;
-// 	//void	*mlx_win;
 	
-// 	//t_data	img;
-// 	t_vars vars;
+	if(vars.map[player_grid_y][player_grid_x] == 'C')
+	{
+		
+		points++;
+		vars.map[player_grid_y][player_grid_x] = '0';
+		printf("points: %i\n", points);
+		
+	}
+	if(vars.map[player_grid_y][player_grid_x] == 'E' && points == vars.leg.c_count)
+	{
+		printf("You win\n");
+		exit(0);
+	}
 	
-// 	vars.leg = check_map("map.ber");
+}
 
-// 	vars.map = read_map("map.ber", vars.leg);
-// 	vars.x = 10;
-// 	vars.y = 10;
-// 	vars.color = 0x00000000;
+int draw_next_frame(t_vars *vars)
+{
+	// vars->color += 1;
+	// int i = 0;
+	// while(i < SCREENWIDTH)
+	// {
+	// 	int j = 0;
+	// 	while(j < SCREENHEIGHT)
+	// 	{
+	// 		my_mlx_pixel_put(&vars->img, i, j, 0x00000000);
+	// 		j++;
+	// 	}
+	// 	i++;
+	// }	
+	if(vars->y + CHAR_HEIGHT > vars->screenheight)
+		vars->y = 1;
+	if(vars->x + CHAR_WIDTH > vars->screenwidth)
+		vars->x = 1;
+	if(vars->y < 1)
+		vars->y = vars->screenheight - CHAR_HEIGHT;
+	if(vars->x < 1)
+		vars->x = vars->screenwidth - CHAR_WIDTH;
+	collision(*vars);
+	//mlx_put_image_to_window(vars->mlx, vars->win, vars->bg_img, 0, 0);
+	draw_map(*vars);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->char_img, vars->x, vars->y);
+	mlx_string_put(vars->mlx, vars->win, 20,20, 0x00FF0000, "char *string");
 	
-// 	vars.mlx = mlx_init();
-// 	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
-// 	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "Vampire.xpm", &vars.img_width, &vars.img_height);
-// 	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
-// 	//vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
-// 	vars.wall_img = mlx_xpm_file_to_image(vars.mlx, "wall.xpm", &vars.img_width, &vars.img_height);
-// 	vars.coll_img = mlx_xpm_file_to_image(vars.mlx, "coin.xpm", &vars.img_width, &vars.img_height);
-// 	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
+	//mlx_sync(MLX_SYNC_WIN_FLUSH_CMD, vars->win);
+	return (0);
+}
+
+
+
+int	move_pixel(int keycode, t_vars *vars)
+{
+	int new_x = vars->x;
+	int new_y = vars->y;
 	
-// 	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
-// 	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
-// 	vars.img.img = mlx_new_image(vars.mlx, 1920, 1080);
-// 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
-// 	  							&vars.img.endian);
-// 	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
-// 	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
-// 	//draw_map(vars);
-// 	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
-// 	mlx_loop(vars.mlx);
-// }
+	if(keycode == KEY_ESC)
+	{
+		mlx_destroy_window(vars->mlx, vars->win);
+		exit(0);
+	}
+	if((keycode == KEY_UP || keycode == KEY_W)  && vars->y > 0)
+		new_y -=CHAR_HEIGHT;
+	if((keycode == KEY_DOWN  || keycode == KEY_S) && vars->y < vars->screenheight)
+		new_y +=CHAR_HEIGHT;
+	if((keycode == KEY_RIGHT || keycode == KEY_D) && vars->x < vars->screenwidth)
+		new_x +=CHAR_HEIGHT;
+	if((keycode == KEY_LEFT  || keycode == KEY_A) && vars->x > 0)
+		new_x -=CHAR_HEIGHT;
+
+	 int player_grid_x = new_x / CHAR_HEIGHT;
+    int player_grid_y = new_y / CHAR_HEIGHT;
+
+    if(vars->map[player_grid_y][player_grid_x] != '1') {
+        vars->x = new_x;
+        vars->y = new_y;
+    }
+	//my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
+	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	return (0);
+}
+
+int	close_window(t_vars *vars)
+{
+	mlx_destroy_window(vars->mlx, vars->win);
+	exit(0);
+}
+
+
+
+int	main(void)
+{
+	//void	*mlx;
+	//void	*mlx_win;
+	
+	//t_data	img;
+	t_vars vars;
+	
+	vars.leg = check_map("map.ber");
+
+	vars.map = read_map("map.ber", vars.leg);
+	
+	vars.x = (vars.leg.p.x *16) +16;
+	vars.y = (vars.leg.p.y * 16) - 16;
+	vars.color = 0x00000000;
+	vars.screenwidth = vars.leg.col*16;
+	vars.screenheight = vars.leg.row*16;
+	vars.mlx = mlx_init();
+	printf("width %i\n  height %i", vars.screenwidth, vars.screenheight);
+	vars.win = mlx_new_window(vars.mlx, vars.screenwidth, vars.screenheight, "GraveDigger");
+	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "char.xpm", &vars.img_width, &vars.img_height);
+	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
+	//vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
+	vars.wall_img = mlx_xpm_file_to_image(vars.mlx, "wall.xpm", &vars.img_width, &vars.img_height);
+	vars.floor_img = mlx_xpm_file_to_image(vars.mlx, "ground.xpm", &vars.img_width, &vars.img_height);
+	vars.coll_img = mlx_xpm_file_to_image(vars.mlx, "collect.xpm", &vars.img_width, &vars.img_height);
+	vars.start_img = mlx_xpm_file_to_image(vars.mlx, "start.xpm", &vars.img_width, &vars.img_height);
+	vars.exit_img = mlx_xpm_file_to_image(vars.mlx, "exit.xpm", &vars.img_width, &vars.img_height);
+	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
+	
+	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
+	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
+	vars.img.img = mlx_new_image(vars.mlx, vars.screenwidth, vars.screenheight);
+	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
+	  							&vars.img.endian);
+	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
+	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
+	//draw_map(vars);
+	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
+	mlx_loop(vars.mlx);
+}
 
 
 	// int main()
@@ -557,14 +599,14 @@ char **read_map(char *filename, t_legend leg)
 //     mlx_loop(mlx);
 // }
 
-int	main(void)
-{
+// int	main(void)
+// {
 	
-	t_vars vars;
-	vars.leg = check_map("map.ber");
-	vars.map = read_map("map.ber", vars.leg);
+// 	t_vars vars;
+// 	vars.leg = check_map("map.ber");
+// 	vars.map = read_map("map.ber", vars.leg);
 	
-	print_map(vars.map, vars.leg.row, vars.leg.col);
-}
+// 	print_map(vars.map, vars.leg.row, vars.leg.col);
+// }
 	
 

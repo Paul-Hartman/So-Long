@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/05 14:12:23 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/05 18:52:04 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@
 #define KEY_S 115
 #define KEY_D 100
 
-#define CHAR_WIDTH 88
-#define CHAR_HEIGHT 97
+#define CHAR_WIDTH 16
+#define CHAR_HEIGHT 16
 
-#define SCREENWIDTH 1920
-#define SCREENHEIGHT 1080
+
+
 
 #define MLX_SYNC_IMAGE_WRITABLE		1
 #define MLX_SYNC_WIN_FLUSH_CMD		2
@@ -73,10 +73,15 @@ typedef struct	s_legend {
 	t_data	img;
 	void *bg_img;
 	void	*char_img;
+	void *floor_img;
+	void *start_img;
+	void *exit_img;
 	void *wall_img;
 	void *coll_img;
 	int		img_width;
     int		img_height;
+	int screenwidth;
+	int screenheight;
 	t_legend leg;
 	char **map;
 	
