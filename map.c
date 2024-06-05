@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/05 16:13:25 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:16:09 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,16 @@ t_legend check_map(char *filename)
 	close(fd);
 	return (leg);
 }
+
+void print_map(char **map, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 
 void lstremove_back(t_list **lst)
 {
@@ -157,7 +167,7 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 			i++;
 			continue;
 		}
-		if(map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E')
+		if(map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
 		{
 			if(collected == leg.c_count)
 			{
@@ -201,6 +211,7 @@ int greedy_best_search(char **map, t_legend leg)
 		else if(map[current_pos.y][current_pos.x] == 'E')
 		{
 			printf("number of steps %i\n", steps);
+			print_map(map, leg.row, leg.col);
 			return (steps);
 		}
 		else
@@ -210,6 +221,7 @@ int greedy_best_search(char **map, t_legend leg)
 		}
 		steps++;
 	}
+	
 	return (0);
 }
 
@@ -245,6 +257,15 @@ int map_isvalidpath(char **map, t_legend leg)
     //     return 0; // Invalid input
     // }
 	
+	return (greedy_best_search(path_map, leg));
+		
+	
+}
+
+int has_walls(char **map, t_legend leg)
+{
+	int i;
+	i = 0;
 	while(i < leg.col)
 	{
 		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
@@ -256,14 +277,24 @@ int map_isvalidpath(char **map, t_legend leg)
 		}
 		i++;
 	}
-
-	
-	return (greedy_best_search(path_map, leg));
-		
-	
+	return (1);
 }
 
+int is_rectangle(char **map, t_legend leg) 
+{
+    int length;
+	int i;
+	i = 0;
+	length = leg.col;
 
+	while(i < leg.row)
+	{
+		if (ft_strlen(map[i]) != length)
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 char **read_map(char *filename, t_legend leg)
 {
@@ -293,6 +324,7 @@ char **read_map(char *filename, t_legend leg)
 	{
 		if(buf == '\n')
 		{
+			map[row][col] = '\0';
 			row++;
 			col = 0;
 		}
@@ -319,11 +351,22 @@ char **read_map(char *filename, t_legend leg)
 		}
 	}
 	close(fd);
-	if(map_isvalidpath(map, leg) == 0)
+	if(!has_walls(map, leg))
+	{
+		printf("map has no walls Error\n");
+		exit (0);
+	}
+	if(!is_rectangle(map, leg))
+	{
+		printf("map is not a rectangle Error\n");
+		exit (0);
+	}
+	if(!map_isvalidpath(map, leg))
 	{
 		printf("map valid Error\n");
 		exit (0);
 	}
+	
 	printf("map is valid\n");
 	
 	return (map);
@@ -513,14 +556,7 @@ char **read_map(char *filename, t_legend leg)
 //     mlx_put_image_to_window(mlx, win, img, 0, 0);
 //     mlx_loop(mlx);
 // }
-void print_map(char **map, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            printf("%c", map[i][j]);
-        }
-        printf("\n");
-    }
-}
+
 int	main(void)
 {
 	
