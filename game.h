@@ -6,16 +6,21 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/05 18:52:04 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/06 19:47:00 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef GAME_H
+# define GAME_H
 
 #include <fcntl.h>
 #include <stdlib.h>
 #include <mlx.h>
+#include "mlx/mlx.h"
 #include <X11/Xlib.h>
 #include "libft/libft.h"
 #include <stdio.h>
+#include <X11/keysym.h>
 
 
 # define KEY_UP 65362
@@ -69,6 +74,9 @@ typedef struct	s_legend {
 	void	*win;
 	int		x;
 	int		y;
+	int moves;
+	int points;
+	int par;
 	int color;
 	t_data	img;
 	void *bg_img;
@@ -87,4 +95,24 @@ typedef struct	s_legend {
 	
 }				t_vars;
 
-int	mlx_sync(int cmd, void *ptr);
+char **read_map(char *filename, t_vars *vars);
+int is_rectangle(char **map, t_legend leg);
+int has_walls(char **map, t_legend leg);
+int map_isvalidpath(char **map, t_legend leg, t_vars *vars);
+t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg);
+int greedy_best_search(char **map, t_legend leg);
+void free_map(char **map, int rows) ;
+int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected);
+
+void lstremove_back(t_list **lst);
+void print_map(char **map, int rows, int cols);
+t_legend check_map(char *filename);
+t_vars init();
+int draw_next_frame(t_vars *vars);
+int	move_charachter(int keycode, t_vars *vars);
+int	close_window(t_vars *vars);
+void collision(t_vars *vars);
+void draw_map(t_vars vars);
+
+
+#endif

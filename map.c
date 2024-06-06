@@ -6,12 +6,11 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/05 20:06:08 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/06 19:01:25 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "game.h"
-
 
 
 t_legend check_map(char *filename)
@@ -70,13 +69,13 @@ t_legend check_map(char *filename)
 		printf("map error Error\n");
 		exit (0);
 	}
-	printf("leg.col: %d\n", leg.col);
-		printf("leg.row: %d\n", leg.row);
-		printf("p_count: %d\n", p_count);
-		printf("e_count: %d\n", e_count);
-		printf("c_count: %d\n", leg.c_count);
-		printf("expeced obst_count: %d\n", 2*((leg.col -1) + (leg.row -1)));	
-		printf("obst_count: %d\n", obst_count);
+	// printf("leg.col: %d\n", leg.col);
+	// 	printf("leg.row: %d\n", leg.row);
+	// 	printf("p_count: %d\n", p_count);
+	// 	printf("e_count: %d\n", e_count);
+	// 	printf("c_count: %d\n", leg.c_count);
+	// 	printf("expeced obst_count: %d\n", 2*((leg.col -1) + (leg.row -1)));	
+	// 	printf("obst_count: %d\n", obst_count);
 	close(fd);
 	return (leg);
 }
@@ -93,20 +92,25 @@ void print_map(char **map, int rows, int cols) {
 
 void lstremove_back(t_list **lst)
 {
-	if (!lst || !*lst)
-		return;
-	t_list *current = *lst;
-	t_list *previous = NULL;
-	while (current->next)
-	{
-		previous = current;
-		current = current->next;
-	}
-	if (previous)
-		previous->next = NULL;
-	else
-		*lst = NULL;
-	free(current);
+    if (lst && *lst)
+    {
+        t_list *last = ft_lstlast(*lst);
+        t_list *node = *lst;
+
+        if (node == last)
+        {
+            *lst = NULL;
+        }
+        else
+        {
+            while (node->next != last)
+            {
+                node = node->next;
+            }
+            node->next = NULL;
+        }
+        free(last);
+    }
 }
 
 int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected)
@@ -136,7 +140,12 @@ int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int 
 	return (closest_collectable);
 
 }
-
+void free_map(char **map, int rows) {
+	for (int i = 0; i < rows; i++) {
+		free(map[i]);
+	}
+	free(map);
+}
 
 t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 {
@@ -197,35 +206,43 @@ int greedy_best_search(char **map, t_legend leg)
 	int steps;
 	steps=0;
 	current_pos = leg.p;
+	t_coord *pos_copy = malloc(sizeof(t_coord));
+    *pos_copy = current_pos;
 	map[current_pos.y][current_pos.x] = 'T';
-	t_list *queue = ft_lstnew(&leg.p);
+	t_list *queue = ft_lstnew(pos_copy);
 	while(queue)
 	{
 		current_pos = get_neighbors(map, current_pos, leg);
 		if(current_pos.x == -1 && current_pos.y == -1 && queue)
 		{
-			current_pos = *(t_coord *)ft_lstlast(queue)->content;
+			t_coord *pos_copy = ft_lstlast(queue)->content;
+			current_pos = *pos_copy;
+			free(pos_copy); 
 			lstremove_back(&queue);
 			steps--;
 		}
 		else if(map[current_pos.y][current_pos.x] == 'E')
 		{
-			printf("number of steps %i\n", steps);
-			print_map(map, leg.row, leg.col);
+			//printf("number of steps %i\n", steps);
+			//print_map(map, leg.row, leg.col);
+			
+			ft_lstclear(&queue, free);
 			return (steps);
 		}
 		else
 		{
 			map[current_pos.y][current_pos.x] = 'T';
-			ft_lstadd_back(&queue, ft_lstnew(&current_pos));
+    		t_coord *pos_copy = malloc(sizeof(t_coord));
+    		*pos_copy = current_pos;
+		    ft_lstadd_back(&queue, ft_lstnew(pos_copy));
 		}
 		steps++;
 	}
-	
+	ft_lstclear(&queue, free);
 	return (0);
 }
 
-int map_isvalidpath(char **map, t_legend leg)
+int map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 {
 	int i;
 	i = 0;
@@ -256,8 +273,11 @@ int map_isvalidpath(char **map, t_legend leg)
 	// if (leg.rows < 1 || !map || !map[0]) {
     //     return 0; // Invalid input
     // }
-	
-	return (greedy_best_search(path_map, leg));
+	int steps;
+	steps = greedy_best_search(path_map, leg);
+	vars->par = steps;
+	free_map(path_map, leg.row);	
+	return (steps);
 		
 	
 }
@@ -296,7 +316,7 @@ int is_rectangle(char **map, t_legend leg)
 	return (1);
 }
 
-char **read_map(char *filename, t_legend leg)
+char **read_map(char *filename, t_vars *vars)
 {
 	int fd;
 	char **map;
@@ -308,13 +328,14 @@ char **read_map(char *filename, t_legend leg)
 	
 	row = 0;
 	col = 0;
-	map = malloc(sizeof(char *) * leg.row);
-	while(row < leg.row)
+	map = malloc(sizeof(char *) * vars->leg.row);
+	while(row < vars->leg.row)
 	{
-		map[row] = malloc(sizeof(char) * leg.col);
+		map[row] = malloc(sizeof(char) * vars->leg.col +1);
+		map[row][vars->leg.col] = '\0';
 		row++;
 	}
-	leg.c = malloc(sizeof(t_coord) * leg.c_count);
+	vars->leg.c = malloc(sizeof(t_coord) * vars->leg.c_count);
 	row = 0;
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
@@ -324,7 +345,7 @@ char **read_map(char *filename, t_legend leg)
 	{
 		if(buf == '\n')
 		{
-			map[row][col] = '\0';
+			
 			row++;
 			col = 0;
 		}
@@ -332,18 +353,18 @@ char **read_map(char *filename, t_legend leg)
 		{
 			if(buf == 'P')
 			{
-				leg.p.x = col;
-				leg.p.y = row;
+				vars->leg.p.x = col;
+				vars->leg.p.y = row;
 			}
 			if(buf == 'E')
 			{
-				leg.e.x = col;
-				leg.e.y = row;
+				vars->leg.e.x = col;
+				vars->leg.e.y = row;
 			}
 			if(buf == 'C')
 			{
-				leg.c[i].x = col;
-				leg.c[i].y = row;
+				vars->leg.c[i].x = col;
+				vars->leg.c[i].y = row;
 				i++;
 			}
 			map[row][col] = buf;
@@ -351,17 +372,17 @@ char **read_map(char *filename, t_legend leg)
 		}
 	}
 	close(fd);
-	if(!has_walls(map, leg))
+	if(!has_walls(map, vars->leg))
 	{
 		printf("map has no walls Error\n");
 		exit (0);
 	}
-	if(!is_rectangle(map, leg))
+	if(!is_rectangle(map, vars->leg))
 	{
 		printf("map is not a rectangle Error\n");
 		exit (0);
 	}
-	if(!map_isvalidpath(map, leg))
+	if(!map_isvalidpath(map, vars->leg, vars))
 	{
 		printf("map valid Error\n");
 		exit (0);
@@ -374,239 +395,35 @@ char **read_map(char *filename, t_legend leg)
 
 
 
-
-
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
-{
-	char	*dst;
-
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
-}
-
-int draw_map(t_vars vars)
-{
-	int i = 0;
-	int j = 0;
-	int x = 0;
-	int y = 0;
-	int distX = vars.screenwidth / vars.leg.col;
-    int distY = vars.screenheight / vars.leg.row;
-	while(i < vars.leg.row)
-	{
-		j = 0;
-		x = 0;
-		while(j < vars.leg.col)
-		{
-			if(vars.map[i][j] == '1')
-				mlx_put_image_to_window(vars.mlx, vars.win, vars.wall_img, x, y);
-			else if(vars.map[i][j] == '0')
-				mlx_put_image_to_window(vars.mlx, vars.win, vars.floor_img, x, y);
-			else if(vars.map[i][j] == 'P')
-				mlx_put_image_to_window(vars.mlx, vars.win, vars.start_img, x, y);
-			else if(vars.map[i][j] == 'E')
-				mlx_put_image_to_window(vars.mlx, vars.win, vars.exit_img, x, y);
-			else if(vars.map[i][j] == 'C')
-				mlx_put_image_to_window(vars.mlx, vars.win, vars.coll_img, x, y);
-			x+=distX;
-			j++;
-		}
-		
-		y+=distY;
-		i++;
-	}
-
-	return (0);
-
-}
-void collision(t_vars vars)
-{
-	int player_grid_x = vars.x / 16;
-	int player_grid_y = vars.y / 16;
-	static int points;
-	
-	
-	if(vars.map[player_grid_y][player_grid_x] == 'C')
-	{
-		
-		points++;
-		vars.map[player_grid_y][player_grid_x] = '0';
-		printf("points: %i\n", points);
-		
-	}
-	if(vars.map[player_grid_y][player_grid_x] == 'E' && points == vars.leg.c_count)
-	{
-		printf("You win\n");
-		exit(0);
-	}
-	
-}
-
-int draw_next_frame(t_vars *vars)
-{
-	// vars->color += 1;
-	// int i = 0;
-	// while(i < SCREENWIDTH)
-	// {
-	// 	int j = 0;
-	// 	while(j < SCREENHEIGHT)
-	// 	{
-	// 		my_mlx_pixel_put(&vars->img, i, j, 0x00000000);
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }	
-	if(vars->y + CHAR_HEIGHT > vars->screenheight)
-		vars->y = 1;
-	if(vars->x + CHAR_WIDTH > vars->screenwidth)
-		vars->x = 1;
-	if(vars->y < 1)
-		vars->y = vars->screenheight - CHAR_HEIGHT;
-	if(vars->x < 1)
-		vars->x = vars->screenwidth - CHAR_WIDTH;
-	collision(*vars);
-	//mlx_put_image_to_window(vars->mlx, vars->win, vars->bg_img, 0, 0);
-	draw_map(*vars);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->char_img, vars->x, vars->y);
-	mlx_string_put(vars->mlx, vars->win, 20,20, 0x00FF0000, "char *string");
-	
-	//mlx_sync(MLX_SYNC_WIN_FLUSH_CMD, vars->win);
-	return (0);
-}
-
-
-
-int	move_pixel(int keycode, t_vars *vars)
-{
-	int new_x = vars->x;
-	int new_y = vars->y;
-	
-	if(keycode == KEY_ESC)
-	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		exit(0);
-	}
-	if((keycode == KEY_UP || keycode == KEY_W)  && vars->y > 0)
-		new_y -=CHAR_HEIGHT;
-	if((keycode == KEY_DOWN  || keycode == KEY_S) && vars->y < vars->screenheight)
-		new_y +=CHAR_HEIGHT;
-	if((keycode == KEY_RIGHT || keycode == KEY_D) && vars->x < vars->screenwidth)
-		new_x +=CHAR_HEIGHT;
-	if((keycode == KEY_LEFT  || keycode == KEY_A) && vars->x > 0)
-		new_x -=CHAR_HEIGHT;
-
-	 int player_grid_x = new_x / CHAR_HEIGHT;
-    int player_grid_y = new_y / CHAR_HEIGHT;
-
-    if(vars->map[player_grid_y][player_grid_x] != '1') {
-        vars->x = new_x;
-        vars->y = new_y;
-    }
-	//my_mlx_pixel_put(&vars->img, vars->x, vars->y, 0x00FF0000);
-	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-	return (0);
-}
-
-int	close_window(t_vars *vars)
-{
-	mlx_destroy_window(vars->mlx, vars->win);
-	exit(0);
-}
-
-
-
 int	main(void)
 {
-	//void	*mlx;
-	//void	*mlx_win;
-	
-	//t_data	img;
 	t_vars vars;
 	
-	vars.leg = check_map("map.ber");
-
-	vars.map = read_map("map.ber", vars.leg);
-	
-	vars.x = (vars.leg.p.x *16) +16;
-	vars.y = (vars.leg.p.y * 16) - 16;
-	vars.color = 0x00000000;
-	vars.screenwidth = vars.leg.col*16;
-	vars.screenheight = vars.leg.row*16;
-	vars.mlx = mlx_init();
-	printf("width %i\n  height %i", vars.screenwidth, vars.screenheight);
-	vars.win = mlx_new_window(vars.mlx, vars.screenwidth, vars.screenheight, "GraveDigger");
-	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "char.xpm", &vars.img_width, &vars.img_height);
-	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
-	//vars.bg_img = mlx_xpm_file_to_image(vars.mlx, "bg_big.xpm", &vars.img_width, &vars.img_height);
-	vars.wall_img = mlx_xpm_file_to_image(vars.mlx, "wall.xpm", &vars.img_width, &vars.img_height);
-	vars.floor_img = mlx_xpm_file_to_image(vars.mlx, "ground.xpm", &vars.img_width, &vars.img_height);
-	vars.coll_img = mlx_xpm_file_to_image(vars.mlx, "collect.xpm", &vars.img_width, &vars.img_height);
-	vars.start_img = mlx_xpm_file_to_image(vars.mlx, "start.xpm", &vars.img_width, &vars.img_height);
-	vars.exit_img = mlx_xpm_file_to_image(vars.mlx, "exit.xpm", &vars.img_width, &vars.img_height);
-	//mlx_sync(MLX_SYNC_IMAGE_WRITABLE, vars.char_img);
-	
-	mlx_hook(vars.win, 2, 1L<<0, move_pixel, &vars);
+	vars = init();
+	mlx_hook(vars.win, 2, 1L<<0, move_charachter, &vars);
 	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
-	vars.img.img = mlx_new_image(vars.mlx, vars.screenwidth, vars.screenheight);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,
-	  							&vars.img.endian);
-	//my_mlx_pixel_put(&vars.img, vars.x, vars.y, 0x00FF0000);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
-	//draw_map(vars);
 	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
 	mlx_loop(vars.mlx);
 }
 
 
-	// int main()
-	// {
-		
-	// 	int i = 0;
-	// 	int j = 0;
-	// 	if (map == NULL)
-	// 		printf("map is null\n");
-	// 	while (map[i] != NULL)
-	// 	{
-	// 		j = 0;
-	// 		while (map[i][j] != '\0')
-	// 		{
-	// 			printf("%c", map[i][j]);
-	// 			j++;
-	// 		}
-	// 		printf("\n");
-	// 		i++;
-	// 	}
-	// 	return 0;
-	// }
-
-
-// int	main(void)
-// {
-
-//     void	*mlx;
-//     void	*win;
-//     void	*img;
-//     char	*relative_path = "Vampire.xpm";
-//     int		img_width;
-//     int		img_height;
-	
-
-//     mlx = mlx_init();
-//     win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-//     img = mlx_xpm_file_to_image(mlx, relative_path, &img_width, &img_height);
-// 	printf("img: %p\n", img);
-//     mlx_put_image_to_window(mlx, win, img, 0, 0);
-//     mlx_loop(mlx);
-// }
 
 // int	main(void)
 // {
 	
 // 	t_vars vars;
 // 	vars.leg = check_map("map.ber");
-// 	vars.map = read_map("map.ber", vars.leg);
+// 	vars.map = read_map("map.ber", &vars);
+// 	vars.x = vars.leg.p.x *16;
+// 	vars.y = vars.leg.p.y * 16;
+// 	printf("vars.x: %d\n", vars.x);
+// 	printf("vars.y: %d\n", vars.y);
+// 	printf("vars.leg.p.x: %d\n", vars.leg.p.x);
+// 	printf("vars.leg.p.y: %d\n", vars.leg.p.y);
 	
-// 	print_map(vars.map, vars.leg.row, vars.leg.col);
+	
+	
+// 	//print_map(vars.map, vars.leg.row, vars.leg.col);
 // }
 	
 

@@ -1,37 +1,64 @@
-# Compiler
+
 CC := cc
 
-# Compiler flags
+
 CFLAGS := -Wall -Wextra -Werror
 
-# Source files
-SRCS := map.c
 
-# Object files
+SRCS := map.c game.c
+
+ifeq ($(shell uname), Linux)
+	INCLUDES = -I/usr/include -Imlx ./libft/libft.a game.h
+else
+	INCLUDES = -I/opt/X11/include -Imlx ./libft/libft.a game.h
+endif
+
+
+
+MLX_LIB = ./mlx/libmlx.a
+LIBFT = ./libft/libft.a
+
+ifeq ($(shell uname), Linux)
+	MLX_FLAGS = -Lmlx -lmlx -L/usr/lib/X11 -lXext -lX11
+else
+	MLX_FLAGS = -Lmlx -lmlx -L/usr/X11/lib -lXext -lX11 -framework OpenGL -framework AppKit
+endif
+
 OBJS := $(SRCS:.c=.o)
 
-# Library name
-LIB_NAME := libft.a
 
-# Target
-NAME := program
 
-all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -g -o $@ $^ -Llibft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
 
-$(LIB_NAME): $(OBJS)
-	ar rcs $@ $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -I/usr/include -Ilibft -Imlx_linux -O3 -c $< -o $@
+NAME := so_long
+
+$(NAME): $(OBJS) $(LIBFT) $(MLX_LIB)
+	$(CC) $(CFLAGS)  $(OBJS) $(LIBFT) $(MLX_PATH) $(MLX_FLAGS) -o $(NAME) 
+ 
+all: $(NAME) $(MLX_LIB) $(LIBFT) 
+ 
+$(MLX_LIB):
+	@make -C ./mlx
+
+$(LIBFT):
+	@make -C ./libft
+	@make bonus -C ./libft
+ 
+
+ 
+
 
 clean:
 	rm -f $(OBJS)
+	make clean -C ./libft
+	make clean -C ./mlx
+	
 
 fclean: clean
-	rm -f $(NAME) $(LIB_NAME)
+	make fclean -C ./libft
+	make clean -C ./mlx
+	rm -f $(NAME)
 
 re: fclean all
 
