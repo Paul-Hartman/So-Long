@@ -106,13 +106,14 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg);
 int greedy_best_search(char **map, t_legend leg);
 void free_map(char **map, int rows) ;
 int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected);
+int	process_key_stroke(int keycode, t_vars *vars);
 
 void lstremove_back(t_list **lst);
 void print_map(char **map, int rows, int cols);
 t_legend check_map(char *filename);
 t_vars init();
 int draw_next_frame(t_vars *vars);
-int	move_charachter(int keycode, t_vars *vars);
+int	move_charachter(int new_x, int new_y, t_vars *vars);
 int	close_window(t_vars *vars);
 void collision(t_vars *vars);
 void draw_map(t_vars vars);
