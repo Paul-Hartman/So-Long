@@ -143,12 +143,25 @@ int draw_next_frame(t_vars *vars)
 	return (0);
 }
 
-t_vars init()
+void save_images(t_vars *vars)
+{
+
+
+	vars->char_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/char.xpm", &vars->img_width, &vars->img_height);
+	vars->wall_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/wall.xpm", &vars->img_width, &vars->img_height);
+	vars->floor_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/ground.xpm", &vars->img_width, &vars->img_height);
+	vars->coll_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/collect.xpm", &vars->img_width, &vars->img_height);
+	vars->start_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/start.xpm", &vars->img_width, &vars->img_height);
+	vars->exit_img = mlx_xpm_file_to_image(vars->mlx, "./sprites/exit.xpm", &vars->img_width, &vars->img_height);
+	
+}
+
+t_vars init(char *file)
 {
 	t_vars vars;
-	vars.leg = check_map("map.ber");
+	vars.leg = check_map(file);
 
-	vars.map = read_map("map.ber", &vars);
+	vars.map = read_map(file, &vars);
 	
 	vars.x = vars.leg.p.x *CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
@@ -159,19 +172,23 @@ t_vars init()
 	vars.screenwidth = vars.leg.col*CHAR_HEIGHT;
 	vars.screenheight = vars.leg.row*CHAR_HEIGHT;
 	vars.mlx = mlx_init();
+	
 	if(!vars.mlx)
 	{
 		printf("mlx init error\n");
 		exit(1);
 	}
-	//printf("width %i\n  height %i", vars.screenwidth, vars.screenheight);
 	vars.win = mlx_new_window(vars.mlx, vars.screenwidth, vars.screenheight, "GraveDigger");
-	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "char.xpm", &vars.img_width, &vars.img_height);
-	vars.wall_img = mlx_xpm_file_to_image(vars.mlx, "wall.xpm", &vars.img_width, &vars.img_height);
-	vars.floor_img = mlx_xpm_file_to_image(vars.mlx, "ground.xpm", &vars.img_width, &vars.img_height);
-	vars.coll_img = mlx_xpm_file_to_image(vars.mlx, "collect.xpm", &vars.img_width, &vars.img_height);
-	vars.start_img = mlx_xpm_file_to_image(vars.mlx, "start.xpm", &vars.img_width, &vars.img_height);
-	vars.exit_img = mlx_xpm_file_to_image(vars.mlx, "exit.xpm", &vars.img_width, &vars.img_height);
+	//printf("width %i\n  height %i", vars.screenwidth, vars.screenheight);
+	vars.char_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/char.xpm", &vars.img_width, &vars.img_height);
+	vars.wall_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/wall.xpm", &vars.img_width, &vars.img_height);
+	vars.floor_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/ground.xpm", &vars.img_width, &vars.img_height);
+	vars.coll_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/collect.xpm", &vars.img_width, &vars.img_height);
+	vars.start_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/start.xpm", &vars.img_width, &vars.img_height);
+	vars.exit_img = mlx_xpm_file_to_image(vars.mlx, "./sprites/exit.xpm", &vars.img_width, &vars.img_height);
+
+
+	//save_images(&vars);
 	
 	vars.img.img = mlx_new_image(vars.mlx, vars.screenwidth, vars.screenheight);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length,

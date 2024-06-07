@@ -15,7 +15,7 @@
 
 #include <fcntl.h>
 #include <stdlib.h>
-#include <mlx.h>
+//#include <mlx.h>
 #include "mlx/mlx.h"
 #include <X11/Xlib.h>
 #include "libft/libft.h"
