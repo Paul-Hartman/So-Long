@@ -37,6 +37,9 @@
 #define CHAR_WIDTH 16
 #define CHAR_HEIGHT 16
 
+# define XPM_ERROR	"Failed to load sprites\n"
+# define MLX_INIT_ERROR	"mlx init error\n"
+# define MLX_WINDOW_ERROR	"mlx_new_window() failed\n"
 
 
 
@@ -67,7 +70,14 @@ typedef struct	s_legend {
 	t_coord *c;
 }				t_legend;
 
-
+typedef struct s_sprites {
+	void	*player;
+	void	*ground;
+	void 	*start;
+	void	*wall;
+	void	*coll;
+	void	*exit;
+}		t_sprites;
 
  typedef struct	s_vars {
 	void	*mlx;
@@ -77,17 +87,10 @@ typedef struct	s_legend {
 	int moves;
 	int points;
 	int par;
-	int color;
 	t_data	img;
-	void *bg_img;
-	void	*char_img;
-	void *floor_img;
-	void *start_img;
-	void *exit_img;
-	void *wall_img;
-	void *coll_img;
-	int		img_width;
-    int		img_height;
+	t_sprites sprites;
+	int		img_w;
+    int		img_h;
 	int screenwidth;
 	int screenheight;
 	t_legend leg;
