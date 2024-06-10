@@ -125,96 +125,111 @@ void	free_map(char **map, int rows)
 	free(map);
 }
 
-t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
+t_coord	assign_coord(int x, int y)
 {
-	int i;
-	
-	t_coord directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-	t_coord next_pos;
-	t_coord chosen_pos;
-	static int collected;
-	
-	next_pos.x = 0;
-	next_pos.y = 0;
-	chosen_pos.x = -1;
-	chosen_pos.y = -1;
-	int shortest_dist;
-	int neighbor_dist;
+	t_coord	coord;
+
+	coord.x = x;
+	coord.y = y;
+	return (coord);
+}
+
+t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
+{
+	int				i;
+	int				j;
+	int				shortest_dist;
+	int				neighbor_dist;
+	const t_coord	directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+	t_coord			next_pos;
+	t_coord			chosen_pos;
+	static int		collected;
+
+	next_pos = assign_coord(0, 0);
+	chosen_pos = assign_coord(-1, -1);
 	shortest_dist = INT_MAX;
-	int j;
-	i=0;
-	if(collected < leg.c_count)
+	i = -1;
+	if (collected < leg.c_count)
 		j = find_closest_coll(map, current_pos, leg, &collected);
-	while(i < 4)
+	while (i++ < 4)
 	{
 		next_pos.x = current_pos.x + directions[i].x;
 		next_pos.y = current_pos.y + directions[i].y;
-		if(next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
-		{
-			i++;
+		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
 			continue;
-		}
-		if(map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
+		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
 		{
-			if(collected == leg.c_count)
-			{
+			if (collected == leg.c_count)
 				neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
-			}
 			else
-			{
 				neighbor_dist = abs(next_pos.x - leg.c[j].x) + abs(next_pos.y - leg.c[j].y);
-			}
-			
-			if(neighbor_dist < shortest_dist)
+			if (neighbor_dist < shortest_dist)
 			{
 				shortest_dist = neighbor_dist;
 				chosen_pos = next_pos;
 			}
 		}
-		i++;
 	}
 	return (chosen_pos);
 }
 
-
-int greedy_best_search(char **map, t_legend leg)
+void	malloc_protection(void *ptr)
 {
-	//unsigned int dist = abs(leg.p.x - leg.e.x) + abs(leg.p.y - leg.e.y);
-	t_coord current_pos;
-	int steps;
-	steps=0;
+	if (ptr == NULL)
+		print_error(MALLOC_ERROR);
+}
+
+int	search_path(char **map, t_list *queue, t_coord current_pos)
+{
+	t_coord			*pos_copy;
+
+	if (current_pos.x == -1 && current_pos.y == -1 && queue)
+	{
+		pos_copy = ft_lstlast(queue)->content;
+		current_pos = *pos_copy;
+		free(pos_copy);
+		lstremove_back(&queue);
+		return (-1);
+	}
+	else if (map[current_pos.y][current_pos.x] == 'E')
+	{
+		ft_lstclear(&queue, free);
+		return (0);
+	}
+	else
+	{
+		map[current_pos.y][current_pos.x] = 'T';
+		pos_copy = malloc(sizeof(t_coord));
+		malloc_protection(pos_copy);
+		*pos_copy = current_pos;
+		ft_lstadd_back(&queue, ft_lstnew(pos_copy));
+		return (1);
+	}
+}
+
+int	greedy_best_search(char **map, t_legend leg)
+{
+	t_coord	current_pos;
+	t_coord	*pos_copy;
+	t_list	*queue;
+	int		steps;
+	int		i;
+
+	steps = 0;
 	current_pos = leg.p;
-	t_coord *pos_copy = malloc(sizeof(t_coord));
-    *pos_copy = current_pos;
+	pos_copy = malloc(sizeof(t_coord));
+	malloc_protection(pos_copy);
+	*pos_copy = current_pos;
 	map[current_pos.y][current_pos.x] = 'T';
-	t_list *queue = ft_lstnew(pos_copy);
-	while(queue)
+	queue = ft_lstnew(pos_copy);
+	malloc_protection(queue);
+	while (queue)
 	{
 		current_pos = get_neighbors(map, current_pos, leg);
-		if(current_pos.x == -1 && current_pos.y == -1 && queue)
-		{
-			t_coord *pos_copy = ft_lstlast(queue)->content;
-			current_pos = *pos_copy;
-			free(pos_copy); 
-			lstremove_back(&queue);
-			steps--;
-		}
-		else if(map[current_pos.y][current_pos.x] == 'E')
-		{
-			//printf("number of steps %i\n", steps);
-			//print_map(map, leg.row, leg.col);
-			
-			ft_lstclear(&queue, free);
+		i = search_path(map, queue, current_pos);
+		steps += i;
+		if (i == 0)
 			return (steps);
-		}
-		else
-		{
-			map[current_pos.y][current_pos.x] = 'T';
-    		t_coord *pos_copy = malloc(sizeof(t_coord));
-    		*pos_copy = current_pos;
-		    ft_lstadd_back(&queue, ft_lstnew(pos_copy));
-		}
-		steps++;
 	}
 	ft_lstclear(&queue, free);
 	return (0);
@@ -236,7 +251,7 @@ int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 		{
 			if (map[i][j] == '1')
 				path_map[i][j] = 'N';
-			else if(map[i][j] == 'E')
+			else if (map[i][j] == 'E')
 				path_map[i][j] = 'E';
 			else
 				path_map[i][j] = 'F';
@@ -318,13 +333,11 @@ char	**malloc_map(t_vars *vars)
 
 	row = 0;
 	map = malloc(sizeof(char *) * vars->leg.row);
-	if (map == NULL)
-		print_error(MALLOC_ERROR);
+	malloc_protection(map);
 	while (row < vars->leg.row)
 	{
 		map[row] = malloc(sizeof(char) * vars->leg.col +1);
-		if (map[row] == NULL)
-			print_error(MALLOC_ERROR);
+		malloc_protection(map[row]);
 		map[row][vars->leg.col] = '\0';
 		row++;
 	}
@@ -339,6 +352,7 @@ char	**read_map(char *filename, t_vars *vars)
 
 	map = malloc_map(vars);
 	vars->leg.c = malloc(sizeof(t_coord) * vars->leg.c_count);
+	malloc_protection(vars->leg.c);
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		print_error(FILE_OPEN_ERROR);

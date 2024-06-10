@@ -129,6 +129,7 @@ int	close_window(t_vars *vars);
 void collision(t_vars *vars);
 void draw_map(t_vars vars);
 void	print_error(char *error_msg);
+void	malloc_protection(void *ptr);
 
 
 #endif
