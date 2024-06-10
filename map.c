@@ -134,6 +134,67 @@ t_coord	assign_coord(int x, int y)
 	return (coord);
 }
 
+// t_coord	*get_neighbors(char **map, t_coord current_pos, t_legend leg, int *valid_count)
+// {
+// 	t_coord			next_pos;
+// 	const t_coord	directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+// 	t_coord		*valid_neighbors;
+// 	int i;
+
+// 	i = 0;
+// 	*valid_count = 0;
+// 	valid_neighbors = malloc(sizeof(t_coord) * 4);
+// 	malloc_protection(valid_neighbors);
+// 	while(i < 4)
+// 	{
+// 		next_pos.x = current_pos.x + directions[i].x;
+// 		next_pos.y = current_pos.y + directions[i].y;
+// 		i++;
+// 		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
+// 			continue;
+// 		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
+// 			valid_neighbors[(*valid_count)++] = next_pos;
+// 	}
+// 	return (valid_neighbors);
+
+// }
+
+
+// t_coord	get_best_neighbor(char **map, t_coord current_pos, t_legend leg)
+// {
+// 	int				i;
+// 	int				j;
+// 	int				shortest_dist;
+// 	int				neighbor_dist;
+// 	t_coord			chosen_pos;
+// 	static int		collected;
+// 	t_coord		*valid_neighbors;
+// 	int valid_count;
+
+// 	valid_neighbors = get_neighbors(map, current_pos, leg, &valid_count);
+// 	chosen_pos = assign_coord(-1, -1);
+// 	shortest_dist = INT_MAX;
+// 	i = 0;
+// 	if (collected < leg.c_count)
+// 		j = find_closest_coll(map, current_pos, leg, &collected);
+// 	while (i < valid_count)
+// 	{
+		
+// 		if (collected == leg.c_count)
+// 			neighbor_dist = abs(valid_neighbors[i].x - leg.e.x) + abs(valid_neighbors[i].y - leg.e.y);
+// 		else
+// 			neighbor_dist = abs(valid_neighbors[i].x - leg.c[j].x) + abs(valid_neighbors[i].y - leg.c[j].y);
+// 		if (neighbor_dist < shortest_dist)
+// 		{
+// 			shortest_dist = neighbor_dist;
+// 			chosen_pos = valid_neighbors[i];
+// 		}
+// 		i++;
+		
+// 	}
+// 	return (chosen_pos);
+// }
+
 t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
 {
 	int				i;
@@ -148,15 +209,18 @@ t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	next_pos = assign_coord(0, 0);
 	chosen_pos = assign_coord(-1, -1);
 	shortest_dist = INT_MAX;
-	i = -1;
+	i = 0;
 	if (collected < leg.c_count)
 		j = find_closest_coll(map, current_pos, leg, &collected);
-	while (i++ < 4)
+	while (i < 4)
 	{
 		next_pos.x = current_pos.x + directions[i].x;
 		next_pos.y = current_pos.y + directions[i].y;
 		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
+		{
+			i++;
 			continue;
+		}
 		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
 		{
 			if (collected == leg.c_count)
@@ -169,6 +233,7 @@ t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
 				chosen_pos = next_pos;
 			}
 		}
+		i++;
 	}
 	return (chosen_pos);
 }
@@ -375,6 +440,7 @@ int	main(int argc, char const *argv[])
 	if (argc != 2)
 		print_error(AGUMENT_ERROR);
 	vars = init(argv[1]);
+	printf("vars.par = %d\n", vars.par);
 	mlx_hook(vars.win, 2, 1L << 0, process_key_stroke, &vars);
 	mlx_hook(vars.win, 17, 1L << 17, close_window, &vars);
 	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
