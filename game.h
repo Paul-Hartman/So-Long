@@ -40,7 +40,15 @@
 # define XPM_ERROR	"Failed to load sprites\n"
 # define MLX_INIT_ERROR	"mlx init error\n"
 # define MLX_WINDOW_ERROR	"mlx_new_window() failed\n"
-
+# define AGUMENT_ERROR	"Wrong number of arguments\n"
+# define WALL_ERROR	"The map is not surrounded by walls\n"
+# define SHAPE_ERROR "The map is not a rectangle\n"
+# define PATH_ERROR "The map does not have a valid path\n"
+# define BAD_CHAR_ERROR "The map contains invalid characters\n"
+# define MAP_FORMAT_ERROR "The map has incorrect number of symbols\n"
+# define FILE_FORMAT_ERROR "Incorrect file format, must be .ber\n"
+# define FILE_OPEN_ERROR "File failed to open\n"
+# define MALLOC_ERROR "Malloc failed\n"
 
 
 #define MLX_SYNC_IMAGE_WRITABLE		1
@@ -65,6 +73,8 @@ typedef struct	s_legend {
 	int col;
 	int row;
 	int c_count;
+	int p_count;
+	int e_count;
 	t_coord p;
 	t_coord e;
 	t_coord *c;
@@ -105,8 +115,9 @@ int map_isvalidpath(char **map, t_legend leg, t_vars *vars);
 t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg);
 int greedy_best_search(char **map, t_legend leg);
 void free_map(char **map, int rows) ;
-int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected);
+int find_closest_coll(char **map, t_coord current_pos, t_legend leg, int *collected);
 int	process_key_stroke(int keycode, t_vars *vars);
+char	**malloc_map(t_vars *vars);
 
 void lstremove_back(t_list **lst);
 void print_map(char **map, int rows, int cols);
@@ -117,6 +128,7 @@ int	move_charachter(int new_x, int new_y, t_vars *vars);
 int	close_window(t_vars *vars);
 void collision(t_vars *vars);
 void draw_map(t_vars vars);
+void	print_error(char *error_msg);
 
 
 #endif

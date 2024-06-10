@@ -13,122 +13,94 @@
 #include "game.h"
 
 
-t_legend check_map(char *filename)
+void	count_symbols(char buf, t_legend *leg)
 {
-	int fd;
-	t_legend leg;
-	char buf;
-	int p_count;
-	int e_count;
-	int obst_count;
-	p_count = 0;
+	if (buf == '\n')
+	{
+		leg->col = 0;
+		leg->row++;
+	}
+	else if (buf == '0' || buf == '1' || buf == 'C'
+		|| buf == 'E' || buf == 'P')
+	{
+		leg->col++;
+		if (buf == 'P')
+			leg->p_count++;
+		if (buf == 'E')
+			leg->e_count++;
+		if (buf == 'C')
+			leg->c_count++;
+	}
+	else
+		print_error(BAD_CHAR_ERROR);
+}
+
+t_legend	check_map(char *filename)
+{
+	t_legend	leg;
+	char		buf;
+	int			fd;
+
 	leg.c_count = 0;
-	e_count = 0;
-	obst_count = 0;
-	if (!filename || !ft_strnstr(filename, ".ber", ft_strlen(filename)))
-	{
-		printf("wrong file Error\n");
-		exit (0);
-	}
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-	{
-		printf("read Error\n");
-		exit (0);
-	}
+	leg.p_count = 0;
+	leg.e_count = 0;
 	leg.col = 0;
 	leg.row = 1;
+	if (!filename || !ft_strnstr(filename, ".ber", ft_strlen(filename)))
+		print_error(FILE_FORMAT_ERROR);
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		print_error(FILE_OPEN_ERROR);
 	while (read(fd, &buf, 1) > 0)
-	{
-		if (buf == '\n')
-		{
-			leg.col = 0;
-			leg.row++;
-		}
-		else if (buf == '0' || buf == '1' || buf == 'C' || buf == 'E' || buf == 'P')
-		{
-			leg.col++;
-			if (buf == 'P')
-				p_count++;
-			if (buf == 'E')
-				e_count++;
-			if (buf == 'C')
-				leg.c_count++;
-			if(buf == '1')
-				obst_count++;
-		}
-		else
-		{
-			printf("map error Error\n");
-			exit (0);
-		}
-	}
-	if(p_count != 1 || e_count != 1 || leg.c_count < 1 || obst_count < 2*((leg.col -1) + (leg.row -1)))
-	{
-		
-		printf("map error Error\n");
-		exit (0);
-	}
-	// printf("leg.col: %d\n", leg.col);
-	// 	printf("leg.row: %d\n", leg.row);
-	// 	printf("p_count: %d\n", p_count);
-	// 	printf("e_count: %d\n", e_count);
-	// 	printf("c_count: %d\n", leg.c_count);
-	// 	printf("expeced obst_count: %d\n", 2*((leg.col -1) + (leg.row -1)));	
-	// 	printf("obst_count: %d\n", obst_count);
+		count_symbols(buf, &leg);
+	if (leg.p_count != 1 || leg.e_count != 1 || leg.c_count < 1)
+		print_error(MAP_FORMAT_ERROR);
 	close(fd);
 	return (leg);
 }
 
-void print_map(char **map, int rows, int cols) {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            printf("%c", map[i][j]);
-        }
-        printf("\n");
-    }
+void	lstremove_back(t_list **lst)
+{
+	t_list	*last;
+	t_list	*node;
+
+	if (lst && *lst)
+	{
+		last = ft_lstlast(*lst);
+		node = *lst;
+		if (node == last)
+		{
+			*lst = NULL;
+		}
+		else
+		{
+			while (node->next != last)
+			{
+				node = node->next;
+			}
+			node->next = NULL;
+		}
+		free(last);
+	}
 }
 
-
-void lstremove_back(t_list **lst)
+int	find_closest_coll(char **map, t_coord cur_pos, t_legend leg, int *collected)
 {
-    if (lst && *lst)
-    {
-        t_list *last = ft_lstlast(*lst);
-        t_list *node = *lst;
+	int	i;
+	int	shortest_dist;
+	int	dist;
+	int	closest_collectable;
 
-        if (node == last)
-        {
-            *lst = NULL;
-        }
-        else
-        {
-            while (node->next != last)
-            {
-                node = node->next;
-            }
-            node->next = NULL;
-        }
-        free(last);
-    }
-}
-
-int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int *collected)
-{
-	int i;
-	int shortest_dist;
-	int dist;
-	int closest_collectable;
 	shortest_dist = INT_MAX;
 	i = 0;
-	while(i < leg.c_count)
+	while (i < leg.c_count)
 	{
-		if(current_pos.x == leg.c[i].x && current_pos.y == leg.c[i].y)
+		if (cur_pos.x == leg.c[i].x && cur_pos.y == leg.c[i].y)
 			(*collected)++;
 		if (map[leg.c[i].y][leg.c[i].x] != 'T')
 		{
-			dist = abs(current_pos.x - leg.c[i].x) + abs(current_pos.y - leg.c[i].y);
-			if(dist < shortest_dist)
+			dist = abs(cur_pos.x - leg.c[i].x) + abs(cur_pos.y - leg.c[i].y);
+			if (dist < shortest_dist)
 			{
 				shortest_dist = dist;
 				closest_collectable = i;
@@ -136,13 +108,19 @@ int find_closest_collectable(char **map, t_coord current_pos, t_legend leg, int 
 		}
 		i++;
 	}
-	
 	return (closest_collectable);
 
 }
-void free_map(char **map, int rows) {
-	for (int i = 0; i < rows; i++) {
+
+void	free_map(char **map, int rows)
+{
+	int	i;
+
+	i = 0;
+	while (i < rows)
+	{
 		free(map[i]);
+		i++;
 	}
 	free(map);
 }
@@ -166,7 +144,7 @@ t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg)
 	int j;
 	i=0;
 	if(collected < leg.c_count)
-		j = find_closest_collectable(map, current_pos, leg, &collected);
+		j = find_closest_coll(map, current_pos, leg, &collected);
 	while(i < 4)
 	{
 		next_pos.x = current_pos.x + directions[i].x;
@@ -242,24 +220,21 @@ int greedy_best_search(char **map, t_legend leg)
 	return (0);
 }
 
-int map_isvalidpath(char **map, t_legend leg, t_vars *vars)
+int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 {
-	int i;
+	int		i;
+	int		steps;
+	int		j;
+	char	**path_map;
+
+	path_map = malloc_map(vars);
 	i = 0;
-	char **path_map;
-	path_map = malloc(sizeof(char *) * leg.row);
-	while(i < leg.row)
+	while (i < leg.row)
 	{
-		path_map[i] = malloc(sizeof(char) * leg.col);
-		i++;
-	}
-	i = 0;
-	while(i < leg.row)
-	{
-		int j = 0;
-		while(j < leg.col)
+		j = 0;
+		while (j < leg.col)
 		{
-			if(map[i][j] == '1')
+			if (map[i][j] == '1')
 				path_map[i][j] = 'N';
 			else if(map[i][j] == 'E')
 				path_map[i][j] = 'E';
@@ -269,45 +244,38 @@ int map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 		}
 		i++;
 	}
-	
-	// if (leg.rows < 1 || !map || !map[0]) {
-    //     return 0; // Invalid input
-    // }
-	int steps;
 	steps = greedy_best_search(path_map, leg);
-	vars->par = steps;
-	free_map(path_map, leg.row);	
-	return (steps);
-		
-	
+	free_map(path_map, leg.row);
+	return (vars->par = steps);
 }
 
-int has_walls(char **map, t_legend leg)
+int	has_walls(char **map, t_legend leg)
 {
-	int i;
+	int	i;
+
 	i = 0;
-	while(i < leg.col)
+	while (i < leg.col)
 	{
-		if(map[0][i] != '1' || map[leg.row - 1][i] != '1')
+		if (map[0][i] != '1' || map[leg.row - 1][i] != '1')
 			return (0);
-		if(i < leg.row)
+		if (i < leg.row)
 		{
-			if(map[i][0] != '1' || map[i][leg.col - 1] != '1')
-			return (0);
+			if (map[i][0] != '1' || map[i][leg.col - 1] != '1')
+				return (0);
 		}
 		i++;
 	}
 	return (1);
 }
 
-int is_rectangle(char **map, t_legend leg) 
+int	is_rectangle(char **map, t_legend leg)
 {
-    size_t length;
-	int i;
+	size_t	length;
+	int		i;
+
 	i = 0;
 	length = leg.col;
-
-	while(i < leg.row)
+	while (i < leg.row)
 	{
 		if (ft_strlen(map[i]) != length)
 			return (0);
@@ -316,123 +284,86 @@ int is_rectangle(char **map, t_legend leg)
 	return (1);
 }
 
-char **read_map(char *filename, t_vars *vars)
+void	save_positions(char buf, t_vars *vars, char **map)
 {
-	int fd;
-	char **map;
-	char buf;
-	int row;
-	int col;
-	int i;
-	i=0;
-	
+	static int	row;
+	static int	col;
+	static int	i;
+	t_coord		temp;
+
+	if (buf == '\n')
+	{
+		row++;
+		col = 0;
+	}
+	else
+	{
+		temp.x = col;
+		temp.y = row;
+		if (buf == 'P')
+			vars->leg.p = temp;
+		if (buf == 'E')
+			vars->leg.e = temp;
+		if (buf == 'C')
+			vars->leg.c[i++] = temp;
+		map[row][col] = buf;
+		col++;
+	}
+}
+
+char	**malloc_map(t_vars *vars)
+{
+	char	**map;
+	int		row;
+
 	row = 0;
-	col = 0;
 	map = malloc(sizeof(char *) * vars->leg.row);
-	while(row < vars->leg.row)
+	if (map == NULL)
+		print_error(MALLOC_ERROR);
+	while (row < vars->leg.row)
 	{
 		map[row] = malloc(sizeof(char) * vars->leg.col +1);
+		if (map[row] == NULL)
+			print_error(MALLOC_ERROR);
 		map[row][vars->leg.col] = '\0';
 		row++;
 	}
-	vars->leg.c = malloc(sizeof(t_coord) * vars->leg.c_count);
-	row = 0;
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-		return (NULL);
-	
-	while (read(fd, &buf, 1) > 0)
-	{
-		if(buf == '\n')
-		{
-			
-			row++;
-			col = 0;
-		}
-		else
-		{
-			if(buf == 'P')
-			{
-				vars->leg.p.x = col;
-				vars->leg.p.y = row;
-			}
-			if(buf == 'E')
-			{
-				vars->leg.e.x = col;
-				vars->leg.e.y = row;
-			}
-			if(buf == 'C')
-			{
-				vars->leg.c[i].x = col;
-				vars->leg.c[i].y = row;
-				i++;
-			}
-			map[row][col] = buf;
-			col++;
-		}
-	}
-	close(fd);
-	if(!has_walls(map, vars->leg))
-	{
-		printf("map has no walls Error\n");
-		exit (0);
-	}
-	if(!is_rectangle(map, vars->leg))
-	{
-		printf("map is not a rectangle Error\n");
-		exit (0);
-	}
-	if(!map_isvalidpath(map, vars->leg, vars))
-	{
-		printf("map valid Error\n");
-		exit (0);
-	}
-	
-	printf("map is valid\n");
-	
 	return (map);
 }
 
-
-
-
-
-int main(int argc, char const *argv[])
+char	**read_map(char *filename, t_vars *vars)
 {
-	if(argc != 2)
-	{
-		printf("wrong number of arguments Error\n");
-		exit (0);
-	}
-	
-	t_vars vars;
-	
-	vars = init(argv[1]);
-	mlx_hook(vars.win, 2, 1L<<0, process_key_stroke, &vars);
-	mlx_hook(vars.win, 17, 1L<<17, close_window, &vars);
-	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
-	mlx_loop(vars.mlx);
+	int		fd;
+	char	**map;
+	char	buf;
+
+	map = malloc_map(vars);
+	vars->leg.c = malloc(sizeof(t_coord) * vars->leg.c_count);
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		print_error(FILE_OPEN_ERROR);
+	while (read(fd, &buf, 1) > 0)
+		save_positions(buf, vars, map);
+	close(fd);
+	if (!has_walls(map, vars->leg))
+		print_error(WALL_ERROR);
+	if (!is_rectangle(map, vars->leg))
+		print_error(SHAPE_ERROR);
+	if (!map_isvalidpath(map, vars->leg, vars))
+		print_error(PATH_ERROR);
+	return (map);
 }
 
+int	main(int argc, char const *argv[])
+{
+	t_vars	vars;
 
-
-
-// int	main(void)
-// {
-	
-// 	t_vars vars;
-// 	vars.leg = check_map("map.ber");
-// 	vars.map = read_map("map.ber", &vars);
-// 	vars.x = vars.leg.p.x *16;
-// 	vars.y = vars.leg.p.y * 16;
-// 	printf("vars.x: %d\n", vars.x);
-// 	printf("vars.y: %d\n", vars.y);
-// 	printf("vars.leg.p.x: %d\n", vars.leg.p.x);
-// 	printf("vars.leg.p.y: %d\n", vars.leg.p.y);
-	
-	
-	
-// 	//print_map(vars.map, vars.leg.row, vars.leg.col);
-// }
-	
-
+	if (argc != 2)
+		print_error(AGUMENT_ERROR);
+	vars = init(argv[1]);
+	mlx_hook(vars.win, 2, 1L << 0, process_key_stroke, &vars);
+	mlx_hook(vars.win, 17, 1L << 17, close_window, &vars);
+	mlx_loop_hook(vars.mlx, draw_next_frame, &vars);
+	mlx_loop(vars.mlx);
+	return (0);
+}

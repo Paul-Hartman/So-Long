@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "game.h"
 
 void	place_sprite(t_vars vars, char sym, int x, int y)
@@ -25,7 +24,6 @@ void	place_sprite(t_vars vars, char sym, int x, int y)
 		mlx_put_image_to_window(vars.mlx, vars.win, vars.sprites.exit, x, y);
 	else if (sym == 'C')
 		mlx_put_image_to_window(vars.mlx, vars.win, vars.sprites.coll, x, y);
-
 }
 
 void	draw_map(t_vars vars)
@@ -52,9 +50,6 @@ void	draw_map(t_vars vars)
 	}
 }
 
-
-
-
 void	collision(t_vars *vars)
 {
 	int	player_grid_x;
@@ -66,7 +61,6 @@ void	collision(t_vars *vars)
 	{
 		vars->points++;
 		vars->map[player_grid_y][player_grid_x] = '0';
-
 	}
 	if (vars->map[player_grid_y][player_grid_x] == 'E'
 		&& vars->points == vars->leg.c_count)
@@ -79,7 +73,6 @@ void	collision(t_vars *vars)
 
 int	close_window(t_vars *vars)
 {
-
 	mlx_destroy_image(vars->mlx, vars->sprites.player);
 	mlx_destroy_image(vars->mlx, vars->sprites.wall);
 	mlx_destroy_image(vars->mlx, vars->sprites.ground);
@@ -117,7 +110,6 @@ int	process_key_stroke(int keycode, t_vars *vars)
 	return (0);
 }
 
-
 int	move_charachter(int new_x, int new_y, t_vars *vars)
 {
 	int	player_grid_x;
@@ -134,7 +126,6 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 	return (0);
 }
 
-
 int	draw_next_frame(t_vars *vars)
 {
 	char	*str;
@@ -150,13 +141,13 @@ int	draw_next_frame(t_vars *vars)
 	return (0);
 }
 
-void print_error(char *error_msg)
+void	print_error(char *error_msg)
 {
 	perror(error_msg);
 	exit(1);
 }
 
-void 	save_images(t_vars *vars)
+void	save_images(t_vars *vars)
 {
 	t_sprites		sprite;
 	int				width;
@@ -181,9 +172,7 @@ void 	save_images(t_vars *vars)
 		print_error(XPM_ERROR);
 }
 
-
-
-t_vars init(char *file)
+t_vars	init(char *file)
 {
 	t_vars	vars;
 
