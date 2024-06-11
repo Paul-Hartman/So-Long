@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/11 14:16:28 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/11 19:07:51 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ typedef struct	s_legend {
 	int c_count;
 	int p_count;
 	int e_count;
-	int collected;
 	t_coord p;
 	t_coord e;
 	t_coord *c;
@@ -92,6 +91,7 @@ typedef struct s_sprites {
 	void	*win;
 	int		x;
 	int		y;
+	int collected;
 	int moves;
 	int points;
 	int par;
@@ -121,7 +121,8 @@ int map_isvalidpath(char **map, t_legend leg, t_vars *vars);
 
 
 //search.c
-int greedy_best_search(char **map, t_legend leg);
+int find_ideal_path(char **map, t_legend leg, t_vars *vars);
+int	greedy_best_search(char **map, t_legend leg, t_vars *vars);
 int	find_closest_coll(char **map, t_coord cur_pos, t_legend leg, int *collected);
 int	search_path(char **map, t_list *queue, t_coord current_pos);
 t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg);
@@ -145,6 +146,10 @@ int	get_dist(t_coord a, t_coord b);
 void	print_error(char *error_msg);
 void	malloc_protection(void *ptr);
 t_coord	assign_coord(int x, int y);
+void print_map(char **map, int rows, int cols);
 
-
+//attempt.c
+t_coord	get_best_neighbor(char **map, t_coord current_pos, t_legend leg, int *coll);
+int	get_shortest(t_coord cur_pos, t_coord target_pos, t_coord *chosen_pos, int min_dist);
+t_coord	*get_nbrs(char **map, t_coord current_pos, t_legend leg, int *valid_count);
 #endif

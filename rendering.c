@@ -6,6 +6,7 @@ t_vars	init(char *file)
 
 	vars.leg = check_map(file);
 	vars.map = read_map(file, &vars);
+	//vars.par = find_ideal_path(vars.map, vars.leg, &vars);
 	vars.x = vars.leg.p.x * CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
 	vars.moves = 0;

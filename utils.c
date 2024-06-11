@@ -52,3 +52,15 @@ t_coord	assign_coord(int x, int y)
 	coord.y = y;
 	return (coord);
 }
+
+void print_map(char **map, int rows, int cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			printf("%c ", map[i][j]);
+		}
+		printf("\n");
+	}
+}

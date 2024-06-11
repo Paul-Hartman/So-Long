@@ -57,24 +57,7 @@ void	count_symbols(char buf, t_legend *leg)
 	else
 		print_error(BAD_CHAR_ERROR);
 }
-void print_map(char **map, t_legend leg)
-{
-	int i;
-	int j;
 
-	i = 0;
-	while (i < leg.row)
-	{
-		j = 0;
-		while (j < leg.col)
-		{
-			printf("%c", map[i][j]);
-			j++;
-		}
-		printf("\n");
-		i++;
-	}
-}
 
 int check_fill(char **map, t_legend leg)
 {
@@ -82,7 +65,6 @@ int check_fill(char **map, t_legend leg)
 	int j;
 
 	i = 0;
-	print_map(map, leg);
 	while (i < leg.row)
 	{
 		j = 0;
@@ -118,11 +100,9 @@ int flood_fill(char **map, t_coord pos, int row_max, int col_max)
 int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 {
 	int		i;
-	int		steps;
 	int		j;
 	char	**path_map;
 
-	steps = 1;
 	path_map = malloc_map(vars);
 	i = 0;
 	while (i < leg.row)
@@ -145,9 +125,11 @@ int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 	printf("row: %d col:%d\n", leg.row, leg.col);
 	flood_fill(path_map, leg.p, leg.row, leg.col);
 	if(!check_fill(path_map, leg))
+	{
+		free_map(path_map, leg.row);
 		return (0);
-	//steps = greedy_best_search(path_map, leg);
+	}
 	
 	free_map(path_map, leg.row);
-	return (vars->par = steps);
+	return (1);
 }

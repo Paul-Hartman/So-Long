@@ -12,8 +12,17 @@
                 "${workspaceFolder}/map.c", // Replace with the path to your source file
                 "${workspaceFolder}/game.c", // Replace with the path to your source file
                 "${workspaceFolder}/attempt.c", // Replace with the path to your source file
-				"${workspaceFolder}/test.h", // Replace with the path to your source file
+				"${workspaceFolder}/game.h", // Replace with the path to your source file
+				"${workspaceFolder}/rendering.c", // Replace with the path to your source file
+				"${workspaceFolder}/validation.c", // Replace with the path to your source file
+				"${workspaceFolder}/search.c", // Replace with the path to your source file
+				"${workspaceFolder}/utils.c", // Replace with the path to your source file
+				"${workspaceFolder}/main.c", // Replace with the path to your source file
+				"${workspaceFolder}/mlx/libmlx_Linux.a",
+				"${workspaceFolder}/mlx/libmlx.a",
 				"${workspaceFolder}/libft/libft.a",
+				"-lXext",
+    			"-lX11",
                 "-o",
                 "${workspaceFolder}/program" // Replace with the path to your executable
             ],

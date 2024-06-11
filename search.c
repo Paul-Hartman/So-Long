@@ -1,13 +1,46 @@
 #include "game.h"
 
-int	greedy_best_search(char **map, t_legend leg)
+int find_ideal_path(char **map, t_legend leg, t_vars *vars)
+{
+	int		i;
+	int		steps;
+	int		j;
+	char	**path_map;
+
+	steps = 1;
+	path_map = malloc_map(vars);
+	i = 0;
+	print_map(map, leg.row, leg.col);
+	while (i < leg.row)
+	{
+		j = 0;
+		while (j < leg.col)
+		{
+			if (map[i][j] == '1')
+				path_map[i][j] = 'N';
+			else if (map[i][j] == 'E')
+				path_map[i][j] = 'E';
+			else
+				path_map[i][j] = 'F';
+			j++;
+		}
+		i++;
+	}
+	steps = greedy_best_search(path_map, leg, vars);
+	print_map(path_map, leg.row, leg.col);
+	printf("steps: %d\n", steps);
+	free_map(path_map, leg.row);
+	return (steps);
+}
+
+int	greedy_best_search(char **map, t_legend leg, t_vars *vars)
 {
 	t_coord	current_pos;
 	t_coord	*pos_copy;
 	t_list	*queue;
 	int		steps;
 	int		i;
-
+	vars->collected = 0;
 	steps = 0;
 	current_pos = leg.p;
 	pos_copy = malloc(sizeof(t_coord));
@@ -18,7 +51,7 @@ int	greedy_best_search(char **map, t_legend leg)
 	malloc_protection(queue);
 	while (queue)
 	{
-		current_pos = get_neighbors(map, current_pos, leg);
+		current_pos = get_best_neighbor(map, current_pos, leg, &vars->collected);
 		i = search_path(map, queue, current_pos);
 		steps += i;
 		if (i == 0)
@@ -83,46 +116,91 @@ int	search_path(char **map, t_list *queue, t_coord current_pos)
 	}
 }
 
-t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
-{
-	int				i;
-	int				j;
-	int				shortest_dist;
-	int				neighbor_dist;
-	const t_coord	directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-	t_coord			next_pos;
-	t_coord			chosen_pos;
-	static int		collected;
+// t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
+// {
+// 	int				i;
+// 	int				j;
+// 	int				shortest_dist;
+// 	int				neighbor_dist;
+// 	const t_coord	directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+// 	t_coord			next_pos;
+// 	t_coord			chosen_pos;
+// 	static int		collected;
 
-	next_pos = assign_coord(0, 0);
-	chosen_pos = assign_coord(-1, -1);
-	shortest_dist = INT_MAX;
-	i = 0;
-	if (collected < leg.c_count)
-		j = find_closest_coll(map, current_pos, leg, &collected);
-	while (i < 4)
-	{
-		next_pos.x = current_pos.x + directions[i].x;
-		next_pos.y = current_pos.y + directions[i].y;
-		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
-		{
-			i++;
-			continue;
-		}
-		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
-		{
-			if (collected == leg.c_count)
-				neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
-			else
-				neighbor_dist = abs(next_pos.x - leg.c[j].x) + abs(next_pos.y - leg.c[j].y);
-			if (neighbor_dist < shortest_dist)
-			{
-				shortest_dist = neighbor_dist;
-				chosen_pos = next_pos;
-			}
-		}
-		i++;
-	}
-	return (chosen_pos);
-}
+// 	next_pos = assign_coord(0, 0);
+// 	chosen_pos = assign_coord(-1, -1);
+// 	shortest_dist = INT_MAX;
+// 	i = 0;
+// 	if (collected < leg.c_count)
+// 		j = find_closest_coll(map, current_pos, leg, &collected);
+// 	while (i < 4)
+// 	{
+// 		next_pos.x = current_pos.x + directions[i].x;
+// 		next_pos.y = current_pos.y + directions[i].y;
+// 		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
+// 		{
+// 			i++;
+// 			continue;
+// 		}
+// 		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
+// 		{
+// 			if (collected == leg.c_count)
+// 				neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
+// 			else
+// 				neighbor_dist = abs(next_pos.x - leg.c[j].x) + abs(next_pos.y - leg.c[j].y);
+// 			if (neighbor_dist < shortest_dist)
+// 			{
+// 				shortest_dist = neighbor_dist;
+// 				chosen_pos = next_pos;
+// 			}
+// 		}
+// 		i++;
+// 	}
+// 	return (chosen_pos);
+// }
+
+
+
+// t_coord	get_neighbors(char **map, t_coord current_pos, t_legend leg)
+// {
+// 	int				i;
+// 	int				j;
+// 	int				shortest_dist;
+// 	int				neighbor_dist;
+// 	const t_coord	directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+// 	t_coord			next_pos;
+// 	t_coord			chosen_pos;
+// 	static int		collected;
+
+// 	next_pos = assign_coord(0, 0);
+// 	chosen_pos = assign_coord(-1, -1);
+// 	shortest_dist = INT_MAX;
+// 	i = 0;
+// 	if (collected < leg.c_count)
+// 		j = find_closest_coll(map, current_pos, leg, &collected);
+// 	while (i < 4)
+// 	{
+// 		next_pos.x = current_pos.x + directions[i].x;
+// 		next_pos.y = current_pos.y + directions[i].y;
+// 		if (next_pos.x < 0 || next_pos.x >= leg.col || next_pos.y < 0 || next_pos.y >= leg.row)
+// 		{
+// 			i++;
+// 			continue;
+// 		}
+// 		if (map[next_pos.y][next_pos.x] == 'F' || map[next_pos.y][next_pos.x] == 'E' || map[next_pos.y][next_pos.x] == 'T')
+// 		{
+// 			if (collected == leg.c_count)
+// 				neighbor_dist = abs(next_pos.x - leg.e.x) + abs(next_pos.y - leg.e.y);
+// 			else
+// 				neighbor_dist = abs(next_pos.x - leg.c[j].x) + abs(next_pos.y - leg.c[j].y);
+// 			if (neighbor_dist < shortest_dist)
+// 			{
+// 				shortest_dist = neighbor_dist;
+// 				chosen_pos = next_pos;
+// 			}
+// 		}
+// 		i++;
+// 	}
+// 	return (chosen_pos);
+// }
 
