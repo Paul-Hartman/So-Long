@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/06 19:47:00 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/11 14:16:28 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,12 @@
 # define SHAPE_ERROR "The map is not a rectangle\n"
 # define PATH_ERROR "The map does not have a valid path\n"
 # define BAD_CHAR_ERROR "The map contains invalid characters\n"
-# define MAP_FORMAT_ERROR "The map has incorrect number of symbols\n"
+# define MAP_FORMAT_ERROR "The map has incorrect number of symbols, (S, E, or C)\n"
 # define FILE_FORMAT_ERROR "Incorrect file format, must be .ber\n"
 # define FILE_OPEN_ERROR "File failed to open\n"
 # define MALLOC_ERROR "Malloc failed\n"
 
 
-#define MLX_SYNC_IMAGE_WRITABLE		1
-#define MLX_SYNC_WIN_FLUSH_CMD		2
-#define MLX_SYNC_WIN_CMD_COMPLETED	3
 
 typedef struct	s_data {
 	void	*img;

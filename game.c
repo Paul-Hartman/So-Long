@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 17:10:45 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/06 18:17:09 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/11 13:57:28 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,3 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 	}
 	return (0);
 }
-
-
-
-
-

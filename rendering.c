@@ -33,17 +33,17 @@ void	save_images(t_vars *vars)
 	int				height;
 
 	sprite.player = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/char.xpm", &width, &width);
+			"./textures/char.xpm", &width, &width);
 	sprite.wall = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/wall.xpm", &width, &height);
+			"./textures/wall.xpm", &width, &height);
 	sprite.ground = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/ground.xpm", &width, &height);
+			"./textures/ground.xpm", &width, &height);
 	sprite.coll = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/collect.xpm", &width, &height);
+			"./textures/collect.xpm", &width, &height);
 	sprite.start = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/start.xpm", &width, &height);
+			"./textures/start.xpm", &width, &height);
 	sprite.exit = mlx_xpm_file_to_image(vars->mlx,
-			"./sprites/exit.xpm", &width, &height);
+			"./textures/exit.xpm", &width, &height);
 	vars->sprites = sprite;
 	if (vars->sprites.player == NULL || vars->sprites.wall == NULL
 		|| vars->sprites.ground == NULL || vars->sprites.coll == NULL

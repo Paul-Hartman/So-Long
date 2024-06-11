@@ -33,7 +33,8 @@ int	get_dist(t_coord a, t_coord b)
 
 void	print_error(char *error_msg)
 {
-	perror(error_msg);
+	write(2, "Error\n", 6);
+	write(2, error_msg, ft_strlen(error_msg));
 	exit(1);
 }
 

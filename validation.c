@@ -57,6 +57,63 @@ void	count_symbols(char buf, t_legend *leg)
 	else
 		print_error(BAD_CHAR_ERROR);
 }
+void print_map(char **map, t_legend leg)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (i < leg.row)
+	{
+		j = 0;
+		while (j < leg.col)
+		{
+			printf("%c", map[i][j]);
+			j++;
+		}
+		printf("\n");
+		i++;
+	}
+}
+
+int check_fill(char **map, t_legend leg)
+{
+	int i;
+	int j;
+
+	i = 0;
+	print_map(map, leg);
+	while (i < leg.row)
+	{
+		j = 0;
+		while (j < leg.col)
+		{
+			if (map[i][j] == 'E' || map[i][j] == 'C')
+				return(0);
+			j++;
+		}
+		i++;
+	}
+
+	return (1);
+}
+
+int flood_fill(char **map, t_coord pos, int row_max, int col_max)
+{
+    if (pos.y < 0 || pos.x < 0 || pos.y >= row_max || pos.x >= col_max ||
+		map[pos.y][pos.x] == '1' || map[pos.y][pos.x] == 'T')
+	{
+        return (0);
+	}
+	map[pos.y][pos.x] = 'T';
+	flood_fill(map, assign_coord(pos.x, pos.y + 1), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x, pos.y - 1), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x + 1, pos.y), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x - 1, pos.y), row_max, col_max);
+	return (0);
+}
+
+
 
 int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 {
@@ -65,6 +122,7 @@ int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 	int		j;
 	char	**path_map;
 
+	steps = 1;
 	path_map = malloc_map(vars);
 	i = 0;
 	while (i < leg.row)
@@ -73,22 +131,23 @@ int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 		while (j < leg.col)
 		{
 			if (map[i][j] == '1')
-				path_map[i][j] = 'N';
+				path_map[i][j] = '1';
 			else if (map[i][j] == 'E')
 				path_map[i][j] = 'E';
+			else if (map[i][j] == 'C')
+				path_map[i][j] = 'C';
 			else
 				path_map[i][j] = 'F';
 			j++;
 		}
 		i++;
 	}
-	steps = greedy_best_search(path_map, leg);
-	for (int i = 0; i < leg.row; i++) {
-		for (int j = 0; j < leg.col; j++) {
-			printf("%c", path_map[i][j]);
-		}
-		printf("\n");
-	}
+	printf("row: %d col:%d\n", leg.row, leg.col);
+	flood_fill(path_map, leg.p, leg.row, leg.col);
+	if(!check_fill(path_map, leg))
+		return (0);
+	//steps = greedy_best_search(path_map, leg);
+	
 	free_map(path_map, leg.row);
 	return (vars->par = steps);
 }
