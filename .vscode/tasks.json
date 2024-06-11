@@ -10,7 +10,9 @@
                 "-g",
 				
                 "${workspaceFolder}/map.c", // Replace with the path to your source file
-				"${workspaceFolder}/game.h", // Replace with the path to your source file
+                "${workspaceFolder}/game.c", // Replace with the path to your source file
+                "${workspaceFolder}/attempt.c", // Replace with the path to your source file
+				"${workspaceFolder}/test.h", // Replace with the path to your source file
 				"${workspaceFolder}/libft/libft.a",
                 "-o",
                 "${workspaceFolder}/program" // Replace with the path to your executable

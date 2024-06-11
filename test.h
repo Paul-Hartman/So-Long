@@ -1,17 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   game.h                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/06 19:47:00 by phartman         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#ifndef GAME_H
-# define GAME_H
+#ifndef TEST_H
+# define TEST_H
 
 #include <fcntl.h>
 #include <stdlib.h>
@@ -109,45 +97,18 @@ typedef struct s_sprites {
 	
 }				t_vars;
 
-//map.c
-t_legend check_map(char *filename);
 char **read_map(char *filename, t_vars *vars);
-void	save_positions(char buf, t_vars *vars, char **map);
-char	**malloc_map(t_vars *vars);
-void free_map(char **map, int rows) ;
-
-//validation.c
 int is_rectangle(char **map, t_legend leg);
 int has_walls(char **map, t_legend leg);
-void	count_symbols(char buf, t_legend *leg);
 int map_isvalidpath(char **map, t_legend leg, t_vars *vars);
-
-
-//search.c
-int greedy_best_search(char **map, t_legend leg);
-int	find_closest_coll(char **map, t_coord cur_pos, t_legend leg, int *collected);
-int	search_path(char **map, t_list *queue, t_coord current_pos);
 t_coord get_neighbors(char **map, t_coord current_pos, t_legend leg);
+int greedy_best_search(char **map, t_legend leg);
+void free_map(char **map, int rows) ;
+int	find_closest_coll(char **map, t_coord cur_pos, t_legend leg, int *collected);
+char	**malloc_map(t_vars *vars);
 
-//rendering.c
-t_vars init();
-void	save_images(t_vars *vars);
-int draw_next_frame(t_vars *vars);
-void draw_map(t_vars vars);
-void	place_sprite(t_vars vars, char sym, int x, int y);
-
-//game.c
-int	process_key_stroke(int keycode, t_vars *vars);
-int	move_charachter(int new_x, int new_y, t_vars *vars);
-int	close_window(t_vars *vars);
-void collision(t_vars *vars);
-
-//utils.c
 void lstremove_back(t_list **lst);
-int	get_dist(t_coord a, t_coord b);
-void	print_error(char *error_msg);
-void	malloc_protection(void *ptr);
-t_coord	assign_coord(int x, int y);
-
+void print_map(char **map, int rows, int cols);
+t_legend check_map(char *filename);
 
 #endif
