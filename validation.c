@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validation.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/12 13:37:46 by phartman          #+#    #+#             */
+/*   Updated: 2024/06/12 13:48:41 by phartman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "game.h"
 
 int	is_rectangle(char **map, t_legend leg)
@@ -15,7 +27,6 @@ int	is_rectangle(char **map, t_legend leg)
 	}
 	return (1);
 }
-
 
 int	has_walls(char **map, t_legend leg)
 {
@@ -58,11 +69,10 @@ void	count_symbols(char buf, t_legend *leg)
 		print_error(BAD_CHAR_ERROR);
 }
 
-
-int check_fill(char **map, t_legend leg)
+int	check_fill(char **map, t_legend leg)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (i < leg.row)
@@ -71,37 +81,20 @@ int check_fill(char **map, t_legend leg)
 		while (j < leg.col)
 		{
 			if (map[i][j] == 'E' || map[i][j] == 'C')
-				return(0);
+				return (0);
 			j++;
 		}
 		i++;
 	}
-
 	return (1);
 }
-
-int flood_fill(char **map, t_coord pos, int row_max, int col_max)
-{
-    if (pos.y < 0 || pos.x < 0 || pos.y >= row_max || pos.x >= col_max ||
-		map[pos.y][pos.x] == '1' || map[pos.y][pos.x] == 'T')
-	{
-        return (0);
-	}
-	map[pos.y][pos.x] = 'T';
-	flood_fill(map, assign_coord(pos.x, pos.y + 1), row_max, col_max);
-	flood_fill(map, assign_coord(pos.x, pos.y - 1), row_max, col_max);
-	flood_fill(map, assign_coord(pos.x + 1, pos.y), row_max, col_max);
-	flood_fill(map, assign_coord(pos.x - 1, pos.y), row_max, col_max);
-	return (0);
-}
-
-
 
 int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 {
 	int		i;
 	int		j;
 	char	**path_map;
+	int		valid;
 
 	path_map = malloc_map(vars);
 	i = 0;
@@ -110,26 +103,15 @@ int	map_isvalidpath(char **map, t_legend leg, t_vars *vars)
 		j = 0;
 		while (j < leg.col)
 		{
-			if (map[i][j] == '1')
-				path_map[i][j] = '1';
-			else if (map[i][j] == 'E')
-				path_map[i][j] = 'E';
-			else if (map[i][j] == 'C')
-				path_map[i][j] = 'C';
-			else
-				path_map[i][j] = 'F';
+			path_map[i][j] = map[i][j];
 			j++;
 		}
 		i++;
 	}
-	printf("row: %d col:%d\n", leg.row, leg.col);
 	flood_fill(path_map, leg.p, leg.row, leg.col);
-	if(!check_fill(path_map, leg))
-	{
-		free_map(path_map, leg.row);
-		return (0);
-	}
-	
+	valid = check_fill(path_map, leg);
 	free_map(path_map, leg.row);
+	if (!valid)
+		return (0);
 	return (1);
 }

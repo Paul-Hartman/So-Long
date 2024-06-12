@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/12 13:28:37 by phartman          #+#    #+#             */
+/*   Updated: 2024/06/12 14:03:46 by phartman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "game.h"
 
-int	main(int argc, char const *argv[])
+int	main(int argc, char *argv[])
 {
 	t_vars	vars;
 
@@ -13,5 +25,3 @@ int	main(int argc, char const *argv[])
 	mlx_loop(vars.mlx);
 	return (0);
 }
-
-

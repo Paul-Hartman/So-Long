@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/11 16:22:46 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 13:32:25 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	free_map(char **map, int rows)
 	}
 	free(map);
 }
-
 
 void	save_positions(char buf, t_vars *vars, char **map)
 {
@@ -116,7 +115,5 @@ char	**read_map(char *filename, t_vars *vars)
 		print_error(SHAPE_ERROR);
 	if (!map_isvalidpath(map, vars->leg, vars))
 		print_error(PATH_ERROR);
-	
 	return (map);
 }
-

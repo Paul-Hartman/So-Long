@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/12 13:34:22 by phartman          #+#    #+#             */
+/*   Updated: 2024/06/12 13:47:30 by phartman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "game.h"
 
 void	lstremove_back(t_list **lst)
@@ -25,12 +37,6 @@ void	lstremove_back(t_list **lst)
 	}
 }
 
-
-int	get_dist(t_coord a, t_coord b)
-{
-	return (abs(a.x - b.x) + abs(a.y - b.y));
-}
-
 void	print_error(char *error_msg)
 {
 	write(2, "Error\n", 6);
@@ -53,14 +59,17 @@ t_coord	assign_coord(int x, int y)
 	return (coord);
 }
 
-void print_map(char **map, int rows, int cols)
+int	flood_fill(char **map, t_coord pos, int row_max, int col_max)
 {
-	for (int i = 0; i < rows; i++)
+	if (pos.y < 0 || pos.x < 0 || pos.y >= row_max || pos.x >= col_max
+		|| map[pos.y][pos.x] == '1' || map[pos.y][pos.x] == 'T')
 	{
-		for (int j = 0; j < cols; j++)
-		{
-			printf("%c ", map[i][j]);
-		}
-		printf("\n");
+		return (0);
 	}
+	map[pos.y][pos.x] = 'T';
+	flood_fill(map, assign_coord(pos.x, pos.y + 1), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x, pos.y - 1), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x + 1, pos.y), row_max, col_max);
+	flood_fill(map, assign_coord(pos.x - 1, pos.y), row_max, col_max);
+	return (0);
 }

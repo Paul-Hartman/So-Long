@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rendering.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
+/*   Updated: 2024/06/12 14:03:29 by phartman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "game.h"
 
 t_vars	init(char *file)
@@ -6,7 +18,6 @@ t_vars	init(char *file)
 
 	vars.leg = check_map(file);
 	vars.map = read_map(file, &vars);
-	//vars.par = find_ideal_path(vars.map, vars.leg, &vars);
 	vars.x = vars.leg.p.x * CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
 	vars.moves = 0;
@@ -67,7 +78,6 @@ int	draw_next_frame(t_vars *vars)
 	return (0);
 }
 
-
 void	draw_map(t_vars vars)
 {
 	int	i;
@@ -105,4 +115,3 @@ void	place_sprite(t_vars vars, char sym, int x, int y)
 	else if (sym == 'C')
 		mlx_put_image_to_window(vars.mlx, vars.win, vars.sprites.coll, x, y);
 }
-
