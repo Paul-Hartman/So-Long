@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 14:25:15 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:07:34 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@
 
 # define KEY_ESC 65307
 
-# define CHAR_WIDTH 16
-# define CHAR_HEIGHT 16
+# define CHAR_WIDTH 32
+# define CHAR_HEIGHT 32
 
 # define XPM_ERROR	"Failed to load sprites\n"
 # define MLX_INIT_ERROR	"mlx init error\n"

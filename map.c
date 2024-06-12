@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:37:28 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 13:32:25 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:16:20 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ char	**malloc_map(t_vars *vars)
 	malloc_protection(map);
 	while (row < vars->leg.row)
 	{
-		map[row] = malloc(sizeof(char) * vars->leg.col +1);
+		map[row] = malloc(sizeof(char) * vars->leg.col + 1);
 		malloc_protection(map[row]);
 		map[row][vars->leg.col] = '\0';
 		row++;

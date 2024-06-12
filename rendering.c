@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 14:03:29 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:20:15 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int	draw_next_frame(t_vars *vars)
 	char	*str;
 
 	str = ft_itoa(vars->moves);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 	collision(vars);
 	draw_map(*vars);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->sprites.player,
