@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 17:10:45 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 13:28:17 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:54:48 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	collision(t_vars *vars)
 	if (vars->map[player_grid_y][player_grid_x] == 'E'
 		&& vars->points == vars->leg.c_count)
 	{
-		printf("You win\n");
+		ft_printf("You win\n");
 		close_window(vars);
 		exit(0);
 	}
@@ -77,13 +77,14 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 	int	player_grid_x;
 	int	player_grid_y;
 
-	vars->moves++;
 	player_grid_x = new_x / CHAR_HEIGHT;
 	player_grid_y = new_y / CHAR_HEIGHT;
 	if (vars->map[player_grid_y][player_grid_x] != '1')
 	{
 		vars->x = new_x;
 		vars->y = new_y;
+		vars->moves++;
+		printf("moves: %d\n", vars->moves);
 	}
 	return (0);
 }
