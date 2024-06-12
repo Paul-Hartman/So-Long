@@ -1,0 +1,8 @@
+# Ignore object files
+*.o
+
+# Ignore binary executables
+so_long
+
+#ignore failed pathfinding
+search.c

@@ -7,7 +7,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/program", // Replace with the path to your executable
-            "args": [], // Add any command-line arguments here
+            "args": ["./maps/map3.ber"],  // Add any command-line arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
