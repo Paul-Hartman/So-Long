@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 14:03:38 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:25:15 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 # include <stdlib.h>
 # include "mlx/mlx.h"
 # include <X11/Xlib.h>
-# include "libft/libft.h"
+# include "ft_printf/libft/libft.h"
+# include "ft_printf/ft_printf.h"
 # include <stdio.h>
 # include <X11/keysym.h>
 

@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:34:22 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 13:47:30 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:52:34 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ void	lstremove_back(t_list **lst)
 
 void	print_error(char *error_msg)
 {
-	write(2, "Error\n", 6);
-	write(2, error_msg, ft_strlen(error_msg));
+	ft_printf("Error\n %s", error_msg);
 	exit(1);
 }
 

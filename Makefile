@@ -8,15 +8,13 @@ CFLAGS := -Wall -Wextra -Werror
 SRCS := map.c game.c validation.c utils.c main.c rendering.c
 
 ifeq ($(shell uname), Linux)
-	INCLUDES = -I/usr/include -Imlx ./libft/libft.a game.h
+	INCLUDES = -I/usr/include -Imlx ./ft_printf/libftprintf.a game.h
 else
-	INCLUDES = -I/opt/X11/include -Imlx ./libft/libft.a game.h
+	INCLUDES = -I/opt/X11/include -Imlx ./ft_printf/libftprintf.a game.h
 endif
 
-
-
 MLX_LIB = ./mlx/libmlx.a
-LIBFT = ./libft/libft.a
+LIBFT = ./ft_printf/libftprintf.a
 
 ifeq ($(shell uname), Linux)
 	MLX_FLAGS = -Lmlx -lmlx -L/usr/lib/X11 -lXext -lX11
@@ -25,11 +23,6 @@ else
 endif
 
 OBJS := $(SRCS:.c=.o)
-
-
-
-
-
 
 NAME := so_long
 
@@ -42,21 +35,15 @@ $(MLX_LIB):
 	@make -C ./mlx
 
 $(LIBFT):
-	@make -C ./libft
-	@make bonus -C ./libft
+	@make -C ./ft_printf
  
-
- 
-
-
 clean:
 	rm -f $(OBJS)
-	make clean -C ./libft
+	make clean -C ./ft_printf
 	make clean -C ./mlx
 	
-
 fclean: clean
-	make fclean -C ./libft
+	make fclean -C ./ft_printf
 	make clean -C ./mlx
 	rm -f $(NAME)
 
