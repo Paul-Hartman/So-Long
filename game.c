@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 17:10:45 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 14:54:48 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:15:01 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,7 @@ void	collision(t_vars *vars)
 
 int	close_window(t_vars *vars)
 {
-	mlx_destroy_image(vars->mlx, vars->sprites.player);
-	mlx_destroy_image(vars->mlx, vars->sprites.wall);
-	mlx_destroy_image(vars->mlx, vars->sprites.ground);
-	mlx_destroy_image(vars->mlx, vars->sprites.coll);
-	mlx_destroy_image(vars->mlx, vars->sprites.start);
-	mlx_destroy_image(vars->mlx, vars->sprites.exit);
-	mlx_destroy_image(vars->mlx, vars->img.img);
+	destroy_images(vars);
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
 	free_map(vars->map, vars->leg.row);
@@ -81,10 +75,19 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 	player_grid_y = new_y / CHAR_HEIGHT;
 	if (vars->map[player_grid_y][player_grid_x] != '1')
 	{
+		if (new_x > vars->x)
+			vars->direction = RIGHT;
+		if (new_x < vars->x)
+			vars->direction = LEFT;
+		if (new_y < vars->y)
+			vars->direction = UP;
+		if (new_y > vars->y)
+			vars->direction = DOWN;
 		vars->x = new_x;
 		vars->y = new_y;
 		vars->moves++;
-		printf("moves: %d\n", vars->moves);
+		vars->step = 1 - vars->step;
+		ft_printf("moves: %d\n", vars->moves);
 	}
 	return (0);
 }

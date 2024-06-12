@@ -5,7 +5,7 @@ CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
 
-SRCS := map.c game.c validation.c utils.c main.c rendering.c
+SRCS := map.c game.c validation.c utils.c main.c rendering.c animation.c
 
 ifeq ($(shell uname), Linux)
 	INCLUDES = -I/usr/include -Imlx ./ft_printf/libftprintf.a game.h

@@ -1,6 +1,7 @@
 {
 	"files.associations": {
 		"xlib.h": "c",
-		"keysymdef.h": "c"
+		"keysymdef.h": "c",
+		"game.h": "c"
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 15:07:34 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:15:31 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,14 @@ typedef struct s_coord
 	int	y;
 }				t_coord;
 
+typedef enum e_direction
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}   t_direction;
+
 typedef struct s_legend
 {
 	int		col;
@@ -77,22 +85,32 @@ typedef struct s_legend
 	t_coord	*c;
 }				t_legend;
 
+typedef struct s_player
+{
+	void	*up[2];
+	void	*down[2];
+	void	*left[2];
+	void	*right[2];
+}		t_player;
+
 typedef struct s_sprites
 {
-	void	*player;
-	void	*ground;
-	void	*start;
-	void	*wall;
-	void	*coll;
-	void	*exit;
+	t_player	player;
+	void		*ground;
+	void		*start;
+	void		*wall;
+	void		*coll;
+	void		*exit;
 }		t_sprites;
 
 typedef struct s_vars
 {
 	void		*mlx;
 	void		*win;
+	int 		step;
 	int			x;
 	int			y;
+	t_direction	direction;
 	int			moves;
 	int			points;
 	t_data		img;
@@ -138,5 +156,11 @@ void		print_error(char *error_msg);
 void		malloc_protection(void *ptr);
 t_coord		assign_coord(int x, int y);
 int			flood_fill(char **map, t_coord pos, int row_max, int col_max);
+
+//animation.c
+t_player	save_char_sprites(t_vars *vars);
+void	destroy_images(t_vars *vars);
+void	xpm_check(t_sprites sprites);
+void	player_anim(t_vars *vars);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 15:20:15 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:24:09 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_vars	init(char *file)
 	vars.map = read_map(file, &vars);
 	vars.x = vars.leg.p.x * CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
+	vars.step = 0;
 	vars.moves = 0;
 	vars.points = 0;
 	vars.screenwidth = vars.leg.col * CHAR_HEIGHT;
@@ -44,8 +45,7 @@ void	save_images(t_vars *vars)
 	int				width;
 	int				height;
 
-	sprite.player = mlx_xpm_file_to_image(vars->mlx,
-			"./textures/char.xpm", &width, &width);
+	sprite.player = save_char_sprites(vars);
 	sprite.wall = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/wall.xpm", &width, &height);
 	sprite.ground = mlx_xpm_file_to_image(vars->mlx,
@@ -57,10 +57,6 @@ void	save_images(t_vars *vars)
 	sprite.exit = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/exit.xpm", &width, &height);
 	vars->sprites = sprite;
-	if (vars->sprites.player == NULL || vars->sprites.wall == NULL
-		|| vars->sprites.ground == NULL || vars->sprites.coll == NULL
-		|| vars->sprites.start == NULL || vars->sprites.exit == NULL)
-		print_error(XPM_ERROR);
 }
 
 int	draw_next_frame(t_vars *vars)
@@ -68,11 +64,10 @@ int	draw_next_frame(t_vars *vars)
 	char	*str;
 
 	str = ft_itoa(vars->moves);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 	collision(vars);
 	draw_map(*vars);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->sprites.player,
-		vars->x, vars->y);
+	player_anim(vars);
 	mlx_string_put(vars->mlx, vars->win, 20, 20, 0xFF0000, "Moves: ");
 	mlx_string_put(vars->mlx, vars->win, 100, 20, 0xFF0000, str);
 	free(str);
