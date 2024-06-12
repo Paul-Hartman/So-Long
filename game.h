@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 17:15:31 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 19:01:36 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,9 @@ typedef struct s_sprites
 	void		*wall;
 	void		*coll;
 	void		*exit;
+	void		*enemy;
+	void 		*UI_moves;
+	void		*UI_points;
 }		t_sprites;
 
 typedef struct s_vars
@@ -162,5 +165,8 @@ t_player	save_char_sprites(t_vars *vars);
 void	destroy_images(t_vars *vars);
 void	xpm_check(t_sprites sprites);
 void	player_anim(t_vars *vars);
+
+//ui.c
+void draw_ui(t_vars *vars);
 
 #endif

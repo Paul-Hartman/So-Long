@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 17:24:09 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/12 19:22:04 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_vars	init(char *file)
 	vars.x = vars.leg.p.x * CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
 	vars.step = 0;
+	vars.direction = DOWN;
 	vars.moves = 0;
 	vars.points = 0;
 	vars.screenwidth = vars.leg.col * CHAR_HEIGHT;
@@ -29,7 +30,7 @@ t_vars	init(char *file)
 	if (!vars.mlx)
 		print_error(MLX_INIT_ERROR);
 	vars.win = mlx_new_window(vars.mlx, vars.screenwidth,
-			vars.screenheight, "so_long");
+			vars.screenheight + (CHAR_HEIGHT * 2), "so_long");
 	if (!vars.win)
 		print_error(MLX_WINDOW_ERROR);
 	save_images(&vars);
@@ -56,21 +57,20 @@ void	save_images(t_vars *vars)
 			"./textures/start.xpm", &width, &height);
 	sprite.exit = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/exit.xpm", &width, &height);
+	sprite.UI_points = mlx_xpm_file_to_image(vars->mlx,
+			"./textures/points_UI.xpm", &width, &height);
+	sprite.UI_moves = mlx_xpm_file_to_image(vars->mlx,
+			"./textures/moves_UI.xpm", &width, &height);
 	vars->sprites = sprite;
 }
 
 int	draw_next_frame(t_vars *vars)
 {
-	char	*str;
-
-	str = ft_itoa(vars->moves);
-	//mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	
 	collision(vars);
 	draw_map(*vars);
+	draw_ui(vars);
 	player_anim(vars);
-	mlx_string_put(vars->mlx, vars->win, 20, 20, 0xFF0000, "Moves: ");
-	mlx_string_put(vars->mlx, vars->win, 100, 20, 0xFF0000, str);
-	free(str);
 	return (0);
 }
 
