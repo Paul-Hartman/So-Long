@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 19:22:04 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/13 16:09:03 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	draw_next_frame(t_vars *vars)
 	collision(vars);
 	draw_map(*vars);
 	draw_ui(vars);
+	update_enemy(vars);
 	player_anim(vars);
 	return (0);
 }

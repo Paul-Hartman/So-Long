@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/13 15:36:49 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/13 16:22:51 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,16 @@ typedef enum e_direction
     RIGHT
 }   t_direction;
 
+typedef struct s_enemy
+{
+	t_coord	pos;
+	t_coord	pointA;
+	t_coord	pointB;
+	int 	x;
+	int 	y;
+	t_coord	*target;
+}				t_enemy;
+
 typedef struct s_legend
 {
 	int		col;
@@ -124,6 +134,7 @@ typedef struct s_vars
 	int			points;
 	t_data		img;
 	t_sprites	sprites;
+	t_enemy		enemy;
 	int			img_w;
 	int			img_h;
 	int			screenwidth;
