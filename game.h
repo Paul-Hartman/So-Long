@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:41:44 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 19:01:36 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:36:49 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,12 @@
 
 # define CHAR_WIDTH 32
 # define CHAR_HEIGHT 32
+
+# define MAX_MOVES 100
+# define MOVES_BAR_WIDTH 100
+# define MOVES_BAR_HEIGHT 10
+# define POINTS_BAR_HEIGHT 17
+# define POINTS_BAR_WIDTH 65
 
 # define XPM_ERROR	"Failed to load sprites\n"
 # define MLX_INIT_ERROR	"mlx init error\n"
@@ -168,5 +174,8 @@ void	player_anim(t_vars *vars);
 
 //ui.c
 void draw_ui(t_vars *vars);
+void	draw_string(t_vars *vars, char *str, int x, int y);
+void	draw_bar(t_vars *vars, int width, int height, t_coord start);
+void draw_progress_bars(t_vars *vars);
 
 #endif

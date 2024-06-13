@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:45:29 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 17:16:22 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:38:21 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	destroy_images(t_vars *vars)
 		mlx_destroy_image(vars->mlx, vars->sprites.player.left[i]);
 		i++;
 	}
+	mlx_destroy_image(vars->mlx, vars->sprites.UI_moves);
+	mlx_destroy_image(vars->mlx, vars->sprites.UI_points);
 	mlx_destroy_image(vars->mlx, vars->sprites.wall);
 	mlx_destroy_image(vars->mlx, vars->sprites.ground);
 	mlx_destroy_image(vars->mlx, vars->sprites.coll);
