@@ -31,6 +31,13 @@ void	collision(t_vars *vars)
 		close_window(vars);
 		exit(0);
 	}
+	if (player_grid_x == vars->enemy.pos.x
+		&& player_grid_y == vars->enemy.pos.y)
+	{
+		ft_printf("You lose\n");
+		close_window(vars);
+		exit(0);
+	}
 }
 
 int	close_window(t_vars *vars)
@@ -88,6 +95,8 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 		vars->moves++;
 		vars->step = 1 - vars->step;
 		ft_printf("moves: %d\n", vars->moves);
+		update_enemy(&vars->enemy, vars);
+		return (1);
 	}
 	return (0);
 }

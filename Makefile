@@ -5,7 +5,7 @@ CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
 
-SRCS := map.c game.c validation.c utils.c main.c rendering.c animation.c ui.c
+SRCS := map.c game.c validation.c utils.c main.c rendering.c animation.c ui.c enemy.c
 
 ifeq ($(shell uname), Linux)
 	INCLUDES = -I/usr/include -Imlx ./ft_printf/libftprintf.a game.h
@@ -27,7 +27,7 @@ OBJS := $(SRCS:.c=.o)
 NAME := so_long
 
 $(NAME): $(OBJS) $(LIBFT) $(MLX_LIB)
-	$(CC) $(CFLAGS)  $(OBJS) $(LIBFT) $(MLX_PATH) $(MLX_FLAGS) -o $(NAME) 
+	@$(CC) $(CFLAGS)  $(OBJS) $(LIBFT) $(MLX_PATH) $(MLX_FLAGS) -o $(NAME) 
  
 all: $(NAME) $(MLX_LIB) $(LIBFT) 
  
@@ -38,14 +38,14 @@ $(LIBFT):
 	@make -C ./ft_printf
  
 clean:
-	rm -f $(OBJS)
-	make clean -C ./ft_printf
-	make clean -C ./mlx
+	@rm -f $(OBJS)
+	@make clean -C ./ft_printf
+	@make clean -C ./mlx
 	
 fclean: clean
-	make fclean -C ./ft_printf
-	make clean -C ./mlx
-	rm -f $(NAME)
+	@make fclean -C ./ft_printf
+	@make clean -C ./mlx
+	@rm -f $(NAME)
 
 re: fclean all
 

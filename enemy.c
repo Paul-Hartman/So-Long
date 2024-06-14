@@ -12,65 +12,117 @@
 
 #include "game.h"
 
-t_enemy enem_init()
+
+t_coord	pick_enemy_spaces(t_vars *vars, int direction)
 {
-	t_enemy enemy;
-	//vars.sprites.enemy = mlx_xpm_file_to_image(vars->mlx,
-	//		"./textures/enemy.xpm", &width, &height);
+	t_coord	coord;
 	
-	//if(somethig bout free space on map)
-	enemy.pointA = assign_coord(0, 0);
-	enemy.pointB = assign_coord(0, 10);
-	enemy.pos = enemy.pointA;
-	enemy.target = &enemy.pointB;
-}
-
-t_coord	compare_coords(t_coord a, t_coord b)
-{
-	t_coord diff;
-
-	diff.x = a.x - b.x;
-	diff.y = a.y - b.y;
-	return (diff);
-}
-
-void updateEnemy(t_enemy *enemy, t_vars *vars)
-{
-	t_coord diff;
+		printf("row: %d col: %d\n", vars->leg.row, vars->leg.col);
 	
-	diff = compare_coords(enemy->pos, *enemy->target);
-	if(diff.x != 0 && diff.y != 0)
+	if(direction == 1)
 	{
-		if(diff.x > 0)
-			moveEnemy(enemy, -1, 0, vars);
-		else
-			moveEnemy(enemy, 1, 0, vars);
-		if(diff.y > 0)
-			moveEnemy(enemy, 0, -1, vars);
-		else
-			moveEnemy(enemy, 0, 1, vars);
+		coord.x = 0;
+		coord.y = 0;
+		while (vars->map[coord.y][coord.x] != '0' && coord.x <= vars->leg.col -1 && coord.y <= vars->leg.row -1)
+		{
+			coord.x++;
+			coord.y++;
+		}
 	}
 	else
 	{
-		if(enemy->target == &enemy->pointA)
-			enemy->target = &enemy->pointB;
+		coord.x = vars->leg.col -1;
+		coord.y = vars->leg.row -1;
+		while (vars->map[coord.y][coord.x] != '0' && coord.x >= 0 && coord.y >= 0)
+		{
+			coord.x--;
+			coord.y--;
+		}
+	}
+	return (coord);
+
+}
+
+
+int	enemy_init(t_vars *vars)
+{
+	t_enemy	enemy;
+
+	//if (vars->leg.o_count > 1)
+	//{
+		enemy.pointA = pick_enemy_spaces(vars, 0);
+		enemy.pointB = pick_enemy_spaces(vars, 1);
+		enemy.pos = enemy.pointA;
+		enemy.target = enemy.pointB;
+		enemy.x = enemy.pos.x * CHAR_HEIGHT;
+		enemy.y = enemy.pos.y * CHAR_HEIGHT;
+		mlx_put_image_to_window(vars->mlx, vars->win,
+			vars->sprites.enemy, enemy.x, enemy.y);
+		vars->enemy = enemy;
+		return (1);
+	//}
+	return (0);
+}
+
+void	switch_targets(t_enemy *enemy)
+{
+	if (enemy->target.x == enemy->pointA.x
+			&& enemy->target.y == enemy->pointA.y)
+			enemy->target = enemy->pointB;
 		else
-			enemy->target = &enemy->pointA;
+			enemy->target = enemy->pointA;
+}
+
+void	update_enemy(t_enemy *enemy, t_vars *vars)
+{
+	printf("target: %d %d\n", enemy->target.x, enemy->target.y);
+	if (enemy->pos.x == enemy->target.x && enemy->pos.y == enemy->target.y)
+		switch_targets(enemy);
+	else if (enemy->pos.x != enemy->target.x)
+	{
+		if (enemy->pos.x > enemy->target.x)
+			move_enemy(enemy, vars, -1, 0);
+		else
+			move_enemy(enemy, vars, 1, 0);
+	}
+	else if (enemy->pos.y != enemy->target.y)
+	{
+		if (enemy->pos.y > enemy->target.y)
+			move_enemy(enemy, vars, 0, -1);
+		else
+			move_enemy(enemy, vars, 0, 1);
 	}
 }
 
-void moveEnemy(t_enemy *enemy, t_vars *vars, int new_x, int new_y)
+void	move_enemy(t_enemy *enemy, t_vars *vars, int new_x, int new_y)
 {
 	int	grid_x;
 	int	grid_y;
 
-	grid_x = new_x / CHAR_HEIGHT;
-	grid_y = new_y / CHAR_HEIGHT;
-	if (vars->map[grid_y][grid_x] != '1')
+	grid_x = new_x + enemy->pos.x;
+	grid_y = new_y + enemy->pos.y;
+	printf("grid: %d %d\n", grid_x, grid_y);
+	if (grid_x >= 0 && grid_x < vars->leg.col && grid_y >= 0 && grid_y < vars->leg.row && vars->map[grid_y][grid_x] != '1')
 	{
-		enemy->x = new_x;
-		enemy->y = new_y;
+		enemy->x = grid_x * CHAR_HEIGHT;
+		enemy->y = grid_y * CHAR_HEIGHT;
+		enemy->pos = assign_coord(grid_x, grid_y);
+		enemy->prev_pos = assign_coord(grid_x, grid_y);
+		return ;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win,
-			vars->sprites.enemy, enemy->x, enemy->y);
+	else
+	{
+		
+		if(!new_x && vars->map[grid_y][grid_x + new_y] == '0')
+			move_enemy(enemy, vars, new_y, 0);
+		else if(!new_y  && vars->map[grid_y + new_x][grid_x] == '0')
+			move_enemy(enemy, vars, 0, new_x);
+		else if(!new_y  && vars->map[grid_y + -new_x][grid_x] == '0')
+			move_enemy(enemy, vars, 0, -new_x);
+		else if(!new_x && vars->map[grid_y][grid_x + -new_y] == '0')
+			move_enemy(enemy, vars, -new_y, 0);
+		else
+			switch_targets(enemy);
+	}
+
 }

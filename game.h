@@ -84,9 +84,10 @@ typedef struct s_enemy
 	t_coord	pos;
 	t_coord	pointA;
 	t_coord	pointB;
+	t_coord prev_pos;
 	int 	x;
 	int 	y;
-	t_coord	*target;
+	t_coord	target;
 }				t_enemy;
 
 typedef struct s_legend
@@ -96,6 +97,7 @@ typedef struct s_legend
 	int		c_count;
 	int		p_count;
 	int		e_count;
+	int 	o_count;
 	t_coord	p;
 	t_coord	e;
 	t_coord	*c;
@@ -188,5 +190,11 @@ void draw_ui(t_vars *vars);
 void	draw_string(t_vars *vars, char *str, int x, int y);
 void	draw_bar(t_vars *vars, int width, int height, t_coord start);
 void draw_progress_bars(t_vars *vars);
+
+//enemy.c
+int		enemy_init(t_vars *vars);
+t_coord	compare_coords(t_coord a, t_coord b);
+void	update_enemy(t_enemy *enemy, t_vars *vars);
+void	move_enemy(t_enemy *enemy, t_vars *vars, int new_x, int new_y);
 
 #endif

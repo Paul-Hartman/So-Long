@@ -21,6 +21,7 @@ t_legend	check_map(char *filename)
 	leg.c_count = 0;
 	leg.p_count = 0;
 	leg.e_count = 0;
+	leg.o_count = 0;
 	leg.col = 0;
 	leg.row = 1;
 	if (!filename || !ft_strnstr(filename, ".ber", ft_strlen(filename)))

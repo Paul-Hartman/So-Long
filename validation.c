@@ -64,6 +64,8 @@ void	count_symbols(char buf, t_legend *leg)
 			leg->e_count++;
 		if (buf == 'C')
 			leg->c_count++;
+		if (buf == '0')
+			leg->o_count++;
 	}
 	else
 		print_error(BAD_CHAR_ERROR);

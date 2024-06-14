@@ -34,6 +34,7 @@ t_vars	init(char *file)
 	if (!vars.win)
 		print_error(MLX_WINDOW_ERROR);
 	save_images(&vars);
+	enemy_init(&vars);
 	vars.img.img = mlx_new_image(vars.mlx, vars.screenwidth, vars.screenheight);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel,
 			&vars.img.line_length, &vars.img.endian);
@@ -61,16 +62,19 @@ void	save_images(t_vars *vars)
 			"./textures/points_UI.xpm", &width, &height);
 	sprite.UI_moves = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/moves_UI.xpm", &width, &height);
+	sprite.enemy = mlx_xpm_file_to_image(vars->mlx,
+			"./textures/enemy.xpm", &width, &height);
 	vars->sprites = sprite;
 }
 
 int	draw_next_frame(t_vars *vars)
 {
-	
+
 	collision(vars);
 	draw_map(*vars);
 	draw_ui(vars);
-	update_enemy(vars);
+	mlx_put_image_to_window(vars->mlx, vars->win,
+		vars->sprites.enemy, vars->enemy.x, vars->enemy.y);
 	player_anim(vars);
 	return (0);
 }

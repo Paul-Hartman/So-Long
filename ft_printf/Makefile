@@ -15,19 +15,19 @@ NAME = libftprintf.a
 all: $(NAME)
 
 %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(MAKE) -C ./libft 
-	$(MAKE) bonus -C ./libft
+	@$(MAKE) -C ./libft 
+	@$(MAKE) bonus -C ./libft
 	cp libft/libft.a $(NAME)
 	ar rc $(NAME) $(OBJS)
 clean:
-	$(MAKE) clean -C ./libft
-	$(RM) $(OBJS)
+	@$(MAKE) clean -C ./libft
+	@$(RM) $(OBJS)
 fclean: clean
-	$(MAKE) fclean -C ./libft
-	$(RM) $(NAME)
+	@$(MAKE) fclean -C ./libft
+	@$(RM) $(NAME)
 
 .PHONY: all fclean clean re
 

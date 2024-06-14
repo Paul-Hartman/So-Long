@@ -67,6 +67,7 @@ void	destroy_images(t_vars *vars)
 		i++;
 	}
 	mlx_destroy_image(vars->mlx, vars->sprites.UI_moves);
+	mlx_destroy_image(vars->mlx, vars->sprites.enemy);
 	mlx_destroy_image(vars->mlx, vars->sprites.UI_points);
 	mlx_destroy_image(vars->mlx, vars->sprites.wall);
 	mlx_destroy_image(vars->mlx, vars->sprites.ground);
