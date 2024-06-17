@@ -54,8 +54,7 @@ void	count_symbols(char buf, t_legend *leg)
 		leg->col = 0;
 		leg->row++;
 	}
-	else if (buf == '0' || buf == '1' || buf == 'C'
-		|| buf == 'E' || buf == 'P')
+	else if (buf == '0' || buf == '1' || buf == 'C' || buf == 'E' || buf == 'P')
 	{
 		leg->col++;
 		if (buf == 'P')

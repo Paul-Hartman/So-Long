@@ -84,11 +84,11 @@ char	**malloc_map(t_vars *vars)
 
 	row = 0;
 	map = malloc(sizeof(char *) * vars->leg.row);
-	malloc_protection(map);
+	malloc_protection(map, MALLOC_ERROR);
 	while (row < vars->leg.row)
 	{
 		map[row] = malloc(sizeof(char) * vars->leg.col + 1);
-		malloc_protection(map[row]);
+		malloc_protection(map[row], MALLOC_ERROR);
 		map[row][vars->leg.col] = '\0';
 		row++;
 	}
@@ -103,7 +103,7 @@ char	**read_map(char *filename, t_vars *vars)
 
 	map = malloc_map(vars);
 	vars->leg.c = malloc(sizeof(t_coord) * vars->leg.c_count);
-	malloc_protection(vars->leg.c);
+	malloc_protection(vars->leg.c, MALLOC_ERROR);
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		print_error(FILE_OPEN_ERROR);

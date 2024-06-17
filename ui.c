@@ -20,10 +20,10 @@ void	draw_ui(t_vars *vars)
 	int		y;
 
 	y = vars->screenheight + 53;
-	mlx_put_image_to_window(vars->mlx, vars->win,
-		vars->sprites.UI_moves, 0, vars->screenheight);
-	mlx_put_image_to_window(vars->mlx, vars->win,
-		vars->sprites.UI_points, vars->screenwidth - 128, vars->screenheight);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->sprites.ui_moves, 0,
+		vars->screenheight);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->sprites.ui_points,
+		vars->screenwidth - 128, vars->screenheight);
 	moves_str = ft_itoa(vars->moves);
 	points_str = ft_itoa(vars->points);
 	goal_str = ft_itoa(vars->leg.c_count);
@@ -50,10 +50,9 @@ void	draw_progress_bars(t_vars *vars)
 	int		points_bar_width;
 	t_coord	start;
 
-	moves_bar_width = (int)((float)vars->moves
-			/ MAX_MOVES * MOVES_BAR_WIDTH);
-	points_bar_width = (int)((float)vars->points
-			/ vars->leg.c_count * POINTS_BAR_WIDTH);
+	moves_bar_width = (int)((float)vars->moves / MAX_MOVES * MOVES_BAR_WIDTH);
+	points_bar_width = (int)((float)vars->points / vars->leg.c_count
+			* POINTS_BAR_WIDTH);
 	start = assign_coord(22, vars->screenheight + 28);
 	draw_bar(vars, moves_bar_width, MOVES_BAR_HEIGHT, start);
 	start = assign_coord(vars->screenwidth - 117, vars->screenheight + 14);
@@ -71,8 +70,8 @@ void	draw_bar(t_vars *vars, int width, int height, t_coord start)
 		y = 0;
 		while (y < height)
 		{
-			mlx_pixel_put(vars->mlx, vars->win,
-				start.x + x, start.y + y, 0xFF0000);
+			mlx_pixel_put(vars->mlx, vars->win, start.x + x, start.y + y,
+				0xFF0000);
 			y++;
 		}
 		x++;

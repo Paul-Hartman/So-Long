@@ -21,9 +21,11 @@ void	lstremove_back(t_list **lst)
 	{
 		last = ft_lstlast(*lst);
 		node = *lst;
+		free(last->content);
 		if (node == last)
 		{
 			*lst = NULL;
+			return ;
 		}
 		else
 		{
@@ -43,10 +45,10 @@ void	print_error(char *error_msg)
 	exit(1);
 }
 
-void	malloc_protection(void *ptr)
+void	malloc_protection(void *ptr, char *error_msg)
 {
 	if (ptr == NULL)
-		print_error(MALLOC_ERROR);
+		print_error(error_msg);
 }
 
 t_coord	assign_coord(int x, int y)

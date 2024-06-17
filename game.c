@@ -21,7 +21,6 @@ void	collision(t_vars *vars)
 	player_grid_y = vars->y / CHAR_HEIGHT;
 	if (vars->map[player_grid_y][player_grid_x] == 'C')
 	{
-		
 		vars->points++;
 		vars->map[player_grid_y][player_grid_x] = '0';
 	}
@@ -47,6 +46,7 @@ int	close_window(t_vars *vars)
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
 	free_map(vars->map, vars->leg.row);
+	ft_lstclear(&vars->path, free);
 	free(vars->leg.c);
 	free(vars->mlx);
 	exit(0);
