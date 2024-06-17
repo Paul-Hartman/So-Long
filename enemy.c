@@ -75,7 +75,6 @@ void	switch_targets(t_enemy *enemy)
 
 void	update_enemy(t_enemy *enemy, t_vars *vars)
 {
-	printf("target: %d %d\n", enemy->target.x, enemy->target.y);
 	if (enemy->pos.x == enemy->target.x && enemy->pos.y == enemy->target.y)
 		switch_targets(enemy);
 	else if (enemy->pos.x != enemy->target.x)
@@ -101,7 +100,6 @@ void	move_enemy(t_enemy *enemy, t_vars *vars, int new_x, int new_y)
 
 	grid_x = new_x + enemy->pos.x;
 	grid_y = new_y + enemy->pos.y;
-	printf("grid: %d %d\n", grid_x, grid_y);
 	if (grid_x >= 0 && grid_x < vars->leg.col && grid_y >= 0 && grid_y < vars->leg.row && vars->map[grid_y][grid_x] != '1')
 	{
 		enemy->x = grid_x * CHAR_HEIGHT;

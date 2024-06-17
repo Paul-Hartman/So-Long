@@ -20,6 +20,10 @@ t_vars	init(char *file)
 	vars.map = read_map(file, &vars);
 	vars.x = vars.leg.p.x * CHAR_HEIGHT;
 	vars.y = vars.leg.p.y * CHAR_HEIGHT;
+	t_path		strt;
+	strt.pos = vars.leg.p;
+	strt.dir = DOWN;
+	vars.path = ft_lstnew(&strt);
 	vars.step = 0;
 	vars.direction = DOWN;
 	vars.moves = 0;
@@ -48,6 +52,7 @@ void	save_images(t_vars *vars)
 	int				height;
 
 	sprite.player = save_char_sprites(vars);
+	sprite.zombie = save_zomb_sprites(vars);
 	sprite.wall = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/wall.xpm", &width, &height);
 	sprite.ground = mlx_xpm_file_to_image(vars->mlx,
@@ -57,7 +62,7 @@ void	save_images(t_vars *vars)
 	sprite.start = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/start.xpm", &width, &height);
 	sprite.exit = mlx_xpm_file_to_image(vars->mlx,
-			"./textures/exit.xpm", &width, &height);
+			"./textures/door_closed.xpm", &width, &height);
 	sprite.UI_points = mlx_xpm_file_to_image(vars->mlx,
 			"./textures/points_UI.xpm", &width, &height);
 	sprite.UI_moves = mlx_xpm_file_to_image(vars->mlx,
@@ -70,9 +75,12 @@ void	save_images(t_vars *vars)
 int	draw_next_frame(t_vars *vars)
 {
 
-	collision(vars);
+	
 	draw_map(*vars);
 	draw_ui(vars);
+	
+	collision(vars);
+	place_zombies(vars);
 	mlx_put_image_to_window(vars->mlx, vars->win,
 		vars->sprites.enemy, vars->enemy.x, vars->enemy.y);
 	player_anim(vars);

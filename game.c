@@ -21,6 +21,7 @@ void	collision(t_vars *vars)
 	player_grid_y = vars->y / CHAR_HEIGHT;
 	if (vars->map[player_grid_y][player_grid_x] == 'C')
 	{
+		
 		vars->points++;
 		vars->map[player_grid_y][player_grid_x] = '0';
 	}
@@ -94,6 +95,7 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 		vars->y = new_y;
 		vars->moves++;
 		vars->step = 1 - vars->step;
+		save_path(assign_coord(new_x, new_y), vars);
 		ft_printf("moves: %d\n", vars->moves);
 		update_enemy(&vars->enemy, vars);
 		return (1);

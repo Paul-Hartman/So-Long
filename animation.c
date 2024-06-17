@@ -37,6 +37,8 @@ t_player	save_char_sprites(t_vars *vars)
 	return (player);
 }
 
+
+
 void	xpm_check(t_sprites sprites)
 {
 	int	i;
@@ -47,7 +49,7 @@ void	xpm_check(t_sprites sprites)
 		if (!sprites.player.down[i] || !sprites.player.up[i]
 			|| !sprites.player.left[i] || !sprites.player.right[i]
 			||!sprites.wall || !sprites.ground || !sprites.coll
-			|| !sprites.start || !sprites.exit)
+			|| !sprites.start || !sprites.exit || !sprites.enemy || !sprites.UI_moves || !sprites.UI_points )
 			print_error(XPM_ERROR);
 		i++;
 	}

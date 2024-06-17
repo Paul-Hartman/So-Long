@@ -103,6 +103,13 @@ typedef struct s_legend
 	t_coord	*c;
 }				t_legend;
 
+typedef struct s_path
+{
+	t_coord	pos;
+	t_direction	dir;
+	
+}				t_path;
+
 typedef struct s_player
 {
 	void	*up[2];
@@ -120,6 +127,7 @@ typedef struct s_sprites
 	void		*coll;
 	void		*exit;
 	void		*enemy;
+	t_player		zombie;
 	void 		*UI_moves;
 	void		*UI_points;
 }		t_sprites;
@@ -134,6 +142,7 @@ typedef struct s_vars
 	t_direction	direction;
 	int			moves;
 	int			points;
+	t_list		*path;
 	t_data		img;
 	t_sprites	sprites;
 	t_enemy		enemy;
@@ -196,5 +205,10 @@ int		enemy_init(t_vars *vars);
 t_coord	compare_coords(t_coord a, t_coord b);
 void	update_enemy(t_enemy *enemy, t_vars *vars);
 void	move_enemy(t_enemy *enemy, t_vars *vars, int new_x, int new_y);
+
+//follow.c
+void	save_path(t_coord current_pos, t_vars *vars);
+void	place_zombies(t_vars *vars);
+t_player	save_zomb_sprites(t_vars *vars);
 
 #endif
