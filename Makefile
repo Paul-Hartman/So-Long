@@ -4,13 +4,13 @@ CC := cc
 
 CFLAGS := -Wall -Wextra -Werror
 
-
-SRCS := map.c game.c validation.c utils.c main.c rendering.c animation.c ui.c enemy.c image_handling.c
+SRCS := map.c game.c validation.c utils.c main.c rendering.c\
+ animation.c ui.c enemy.c image_handling.c
 
 ifeq ($(shell uname), Linux)
-	INCLUDES = -I/usr/include -Imlx ./ft_printf/libftprintf.a game.h
+	INCLUDES = -I/usr/include -Imlx  game.h
 else
-	INCLUDES = -I/opt/X11/include -Imlx ./ft_printf/libftprintf.a game.h
+	INCLUDES = -I/opt/X11/include -Imlx game.h
 endif
 
 MLX_LIB = ./mlx/libmlx.a

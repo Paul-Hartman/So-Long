@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 17:10:45 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/12 17:15:01 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:50:22 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	move_charachter(int new_x, int new_y, t_vars *vars)
 		vars->step = 1 - vars->step;
 		save_path(assign_coord(new_x, new_y), vars);
 		ft_printf("moves: %d\n", vars->moves);
-		update_enemy(&vars->enemy, vars);
+		draw_next_frame(vars);
 		return (1);
 	}
 	return (0);

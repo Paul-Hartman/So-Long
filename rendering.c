@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 13:33:00 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/13 16:09:03 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:50:51 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,20 @@ t_vars	init(char *file)
 	malloc_protection(vars.win, MLX_WINDOW_ERROR);
 	save_images(&vars);
 	enemy_init(&vars);
-	vars.img.img = mlx_new_image(vars.mlx, vars.screenwidth, vars.screenheight);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel,
-			&vars.img.line_length, &vars.img.endian);
 	return (vars);
 }
 
 int	draw_next_frame(t_vars *vars)
 {
 	draw_map(*vars);
-	draw_ui(vars);
-	collision(vars);
-	if (vars->points > 0)
-		place_zombies(vars);
+	update_enemy(&vars->enemy, vars);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->sprites.enemy,
 		vars->enemy.x, vars->enemy.y);
+	if (vars->points > 0)
+		place_zombies(vars);
 	player_anim(vars);
+	draw_ui(vars);
+	collision(vars);
 	return (0);
 }
 
@@ -70,10 +68,10 @@ void	draw_map(t_vars vars)
 		while (j < vars.leg.col)
 		{
 			place_sprite(vars, vars.map[i][j], x, y);
-			x += vars.screenwidth / vars.leg.col;
+			x += CHAR_HEIGHT;
 			j++;
 		}
-		y += vars.screenheight / vars.leg.row;
+		y += CHAR_HEIGHT;
 		i++;
 	}
 }

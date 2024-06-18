@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 15:45:29 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/13 15:38:21 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:49:12 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	save_path(t_coord current_pos, t_vars *vars)
 	if (vars->path == NULL)
 	{
 		vars->path = ft_lstnew(path);
+		return ;
 	}
 	else
 	{
@@ -110,5 +111,4 @@ void	destroy_images(t_vars *vars)
 	mlx_destroy_image(vars->mlx, vars->sprites.ground);
 	mlx_destroy_image(vars->mlx, vars->sprites.coll);
 	mlx_destroy_image(vars->mlx, vars->sprites.start);
-	mlx_destroy_image(vars->mlx, vars->img.img);
 }
