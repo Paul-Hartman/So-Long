@@ -6,7 +6,7 @@
 /*   By: phartman <phartman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 17:10:45 by phartman          #+#    #+#             */
-/*   Updated: 2024/06/18 19:50:22 by phartman         ###   ########.fr       */
+/*   Updated: 2024/06/20 14:10:10 by phartman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,23 @@ int	process_key_stroke(int keycode, t_vars *vars)
 
 	new_y = vars->y;
 	new_x = vars->x;
-	if (keycode == KEY_ESC)
-		close_window(vars);
-	if ((keycode == KEY_UP || keycode == KEY_W))
-		new_y -= CHAR_HEIGHT;
-	if ((keycode == KEY_DOWN || keycode == KEY_S))
-		new_y += CHAR_HEIGHT;
-	if ((keycode == KEY_RIGHT || keycode == KEY_D))
-		new_x += CHAR_HEIGHT;
-	if ((keycode == KEY_LEFT || keycode == KEY_A))
-		new_x -= CHAR_HEIGHT;
-	move_charachter(new_x, new_y, vars);
+	if(keycode == KEY_ESC || keycode == KEY_UP || keycode == KEY_DOWN
+		|| keycode == KEY_RIGHT || keycode == KEY_LEFT || keycode == KEY_W
+		|| keycode == KEY_S || keycode == KEY_A || keycode == KEY_D)
+	{
+		if (keycode == KEY_ESC)
+			close_window(vars);
+		if ((keycode == KEY_UP || keycode == KEY_W))
+			new_y -= CHAR_HEIGHT;
+		if ((keycode == KEY_DOWN || keycode == KEY_S))
+			new_y += CHAR_HEIGHT;
+		if ((keycode == KEY_RIGHT || keycode == KEY_D))
+			new_x += CHAR_HEIGHT;
+		if ((keycode == KEY_LEFT || keycode == KEY_A))
+			new_x -= CHAR_HEIGHT;
+		move_charachter(new_x, new_y, vars);
+	}
+	
 	return (0);
 }
 
